@@ -1,0 +1,17 @@
+ Project proposal (10%) (2-3 pages):
+    • Problem Statement: What are you solving? Why is it interesting/important?
+    • Dataset: What data will you use? Source, size, preprocessing needed. Show sample data.
+    • Methodology: What models/techniques? Why these choices? Architecture diagram.
+    • Evaluation Plan: What metrics? Baseline comparisons. Success criteria.
+    • Ethics & Limitations: Potential biases. Limitations of approach. Responsible use considerations
+
+Final project (50%)
+    • Code Repository (50%)
+        o Clean, documented code; README with setup instructions; requirements.txt
+        o Example usage; Reproducible results
+    • Written Report (30%)
+        o 6-8 pages (excluding references, appendices)
+        o Conference paper format (template TBD)
+    • Presentation (20%)
+        o 10-12 minutes + 3 Q&A
+        o All team members must present

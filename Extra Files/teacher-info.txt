@@ -1,0 +1,27 @@
+Dear students, 
+These are some Final Project examples:
+* Medical Imaging: Tumor segmentation with U-Net + GradCAM explainability
+* LLM Application: Domain-specific chatbot with RAG (legal, medical, technical support)
+* Multi-Modal System: Visual search engine for e-commerce with CLIP
+* Generative AI: Style transfer system or text-to-image application
+* Object Detection: Custom detector for specific domain (wildlife, manufacturing defects)
+* Document Understanding: Multi-modal LLM for invoice/receipt processing
+* Fine-Tuned LLM: Specialized model for code generation or creative writing
+
+You may also follow a different route, for example:
+* Identify a running or recent shared-task / scientific challenge and propose a (possibly partial) solution;
+* Identify a paper and implement a lighter version of the proposed model, or run ablation studies on the model (if not already included on the paper), or implement a strong ML baseline that the authors left out.
+
+You may select one of these examples or use them as a starting point to define your own proposal. Either way, you must confirm that you can find data and that you can access computational resources that allow training a model.
+You may/should consider light(er) models and focus on optimizing efficacy/efficiency tradeoff. The project will be evaluated in terms of the architecture and training options and their justification, not on the final results. Note however that results should achieve a reasonable and/or justifiable level when considering the problem and model type/size, and that error analysis should be included.
+
+
+As a reminder, the 2-3 page proposal must include:
+* Problem Statement: What are you solving? Why is it interesting/important?
+* Dataset: What data will you use? Source, size, preprocessing needed. Show sample data.
+* Methodology: What models/techniques? Why these choices? Architecture diagram.
+* Evaluation Plan: What metrics? Baseline comparisons. Success criteria.
+* Ethics & Limitations: Potential biases. Limitations of approach. Responsible use considerations
+
+Use the ACM SIG conference template (single column, you can/should remove the image on the first page).
+https://www.overleaf.com/latex/templates/association-for-computing-machinery-acm-sig-conference-proceedings-with-small-format-template/kxbkrwxkdgdh
