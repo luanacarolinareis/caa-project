@@ -1,0 +1,79 @@
+This is BibTeX, Version 0.99e
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: sample-acmsmall-conf.aux
+Reallocating 'name_of_file' (item size: 1) to 21 items.
+The style file: ACM-Reference-Format.bst
+Reallocating 'name_of_file' (item size: 1) to 12 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 6000 items.
+Database file #1: sample-base.bib
+Warning--entry type for "Bornmann2019" isn't style-file defined
+--line 1426 of file sample-base.bib
+Warning--entry type for "AnzarootPBM14" isn't style-file defined
+--line 1443 of file sample-base.bib
+Warning--entry type for "Reiser2014" isn't style-file defined
+--line 1468 of file sample-base.bib
+Warning--entry type for "Baggett2025" isn't style-file defined
+--line 1478 of file sample-base.bib
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'glb_str_end' (item size: 4) to 20 items.
+Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
+Reallocating 'global_strs' (item size: 1) to 4000000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 9000 items.
+Warning--empty organization in Ablamowicz07
+Warning--empty organization in UMassCitations
+Warning--empty author in 2004:ITE:1009386.1010128
+Warning--articleno or eid field, but no numpages field, in Lee05
+Warning--page numbers missing in both pages and numpages fields in Lee05
+Warning--articleno or eid, but no pages or numpages field in Lee05
+Warning--articleno or eid field, but no numpages field, in rous08
+Warning--page numbers missing in both pages and numpages fields in rous08
+Warning--articleno or eid, but no pages or numpages field in rous08
+Warning--empty organization in Thornburg01
+Warning--empty organization in TUGInstmem
+Warning--empty organization in TUGInstmem
+Warning--empty organization in CTANacmart
+You've used 40 entries,
+            6056 wiz_defined-function locations,
+            1947 strings with 26917 characters,
+and the built_in function-call counts, 36677 in all, are:
+= -- 4570
+> -- 880
+< -- 5
++ -- 277
+- -- 372
+* -- 2475
+:= -- 3636
+add.period$ -- 207
+call.type$ -- 40
+change.case$ -- 232
+chr.to.int$ -- 38
+cite$ -- 53
+duplicate$ -- 3405
+empty$ -- 2414
+format.name$ -- 379
+if$ -- 8534
+int.to.chr$ -- 4
+int.to.str$ -- 1
+missing$ -- 70
+newline$ -- 409
+num.names$ -- 273
+pop$ -- 1111
+preamble$ -- 1
+purify$ -- 542
+quote$ -- 0
+skip$ -- 1271
+stack$ -- 0
+substring$ -- 2949
+swap$ -- 313
+text.length$ -- 95
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 972
+warning$ -- 13
+while$ -- 272
+width$ -- 0
+write$ -- 864
+(There were 17 warnings)
