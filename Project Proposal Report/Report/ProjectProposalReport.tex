@@ -1,0 +1,115 @@
+\documentclass[acmsmall,screen,nonacm]{acmart}
+
+\usepackage{xcolor}
+
+\newcommand{\owner}[1]{\textbf{[#1]}}
+\newcommand{\placeholder}[1]{{\color{gray}\textit{#1}}}
+\newcommand{\draftnote}[2]{\noindent\owner{#1} \placeholder{#2}\par}
+
+\title{Project Proposal Title}
+\author{Jakub Błaszczyk}
+\email{?@ua.pt}
+\affiliation{%
+  \institution{University of Aveiro}
+  \city{Aveiro}
+  \country{Portugal}}
+
+\author{Carolina Reis}
+\email{luanacarolina@ua.pt}
+\affiliation{%
+  \institution{University of Aveiro}
+  \city{Aveiro}
+  \country{Portugal}}
+
+\renewcommand{\shortauthors}{Jakub and Carolina}
+
+\begin{document}
+
+\begin{abstract}
+\placeholder{Write 4--6 sentences summarizing the problem, the dataset, the proposed method, and the evaluation plan after the rest of the proposal is finished.}
+\end{abstract}
+
+\keywords{project proposal, placeholder draft}
+
+\maketitle
+
+\section{Problem Statement}
+
+\subsection{Background and Motivation}
+\draftnote{Jakub}{Explain the application domain and why this problem matters. Keep it concrete: what is the real task, who benefits from solving it, and why it is interesting enough for a final project.}
+
+\subsection{Project Goal and Scope}
+\draftnote{Carolina}{State clearly what the model will do. Define the input, the output, and the scope. Also mention what is intentionally out of scope so the proposal stays realistic.}
+
+\subsection{Expected Contribution}
+\draftnote{Jakub/Carolina}{Write 1 short paragraph on what this project is expected to contribute. Example angles: a lightweight baseline, a comparison of small models, an explainability analysis, or an efficiency vs performance study.}
+
+\section{Dataset}
+
+\subsection{Source and Access}
+\draftnote{Jakub}{Name the dataset, where it comes from, and how we can access it. Include the official link and mention whether the data is public, restricted, or requires preprocessing before use.}
+
+\subsection{Size and Label Structure}
+\draftnote{Carolina}{Describe the dataset size, the number of classes or outputs, and any class imbalance issues. If relevant, mention image resolution, modalities, or train/validation/test splits.}
+
+\subsection{Preprocessing}
+\draftnote{Jakub}{Describe the preprocessing pipeline. Example points: resizing, normalization, augmentation, train/validation split, handling missing labels, filtering noisy samples, or converting grayscale to RGB.}
+
+\subsection{Sample Data}
+\draftnote{Carolina}{Add a short paragraph describing what a typical sample looks like. Later, include one small figure or table with example samples if useful.}
+
+\section{Methodology}
+
+\subsection{Baseline Approach}
+\draftnote{Jakub}{Describe the simplest reasonable baseline. This can be a small CNN, logistic regression on extracted features, or another lightweight benchmark that gives us something to compare against.}
+
+\subsection{Proposed Model}
+\draftnote{Carolina}{Describe the main architecture we plan to use. Explain why it fits the problem and why it is realistic given our time and compute constraints.}
+
+\subsection{Training Setup}
+\draftnote{Jakub}{Mention optimizer, learning rate strategy, loss function, batch size, number of epochs, hardware assumptions, and any transfer learning choices. Keep this lightweight and realistic.}
+
+\subsection{Architecture Diagram}
+\draftnote{Carolina}{Replace the placeholder figure below with a simple pipeline or architecture diagram once the topic is fixed.}
+
+\begin{figure}[h]
+  \centering
+  \fbox{%
+    \parbox[c][4cm][c]{0.85\linewidth}{%
+      \centering
+      \placeholder{Placeholder for architecture or pipeline diagram}%
+    }%
+  }
+  \caption{Placeholder architecture or pipeline diagram.}
+  \Description{A placeholder box where the final architecture or pipeline diagram will be inserted.}
+\end{figure}
+
+\section{Evaluation Plan}
+
+\subsection{Metrics}
+\draftnote{Jakub}{List the main evaluation metrics. Choose metrics that match the task, such as accuracy, macro-F1, AUROC, IoU, Dice, precision, recall, or inference time.}
+
+\subsection{Baselines and Comparisons}
+\draftnote{Carolina}{Explain what we will compare against. This can include the baseline model, a pretrained lightweight model, or an ablation such as with and without augmentation or explainability.}
+
+\subsection{Experimental Protocol}
+\draftnote{Jakub}{Describe how the experiments will be run fairly. Mention train/validation/test split, cross-validation if needed, repeated runs if relevant, and how hyperparameter choices will be kept reasonable.}
+
+\subsection{Success Criteria}
+\draftnote{Carolina}{Define what would count as a successful outcome. Example: achieving a target macro-F1, outperforming the baseline by a clear margin, or reaching a good trade-off between performance and efficiency.}
+
+\section{Ethics and Limitations}
+
+\subsection{Potential Biases}
+\draftnote{Jakub}{Discuss dataset bias, class imbalance, domain shift, demographic bias, labeling noise, or any other source of unfairness or over-optimistic evaluation.}
+
+\subsection{Limitations of the Approach}
+\draftnote{Carolina}{State the main technical limitations honestly. Example points: small dataset, limited compute, weak real-world generalization, simplified problem setup, or restricted evaluation conditions.}
+
+\subsection{Responsible Use}
+\draftnote{Jakub/Carolina}{Add a short paragraph explaining how the model should and should not be used. This is especially important for medical, safety-critical, or decision-support tasks.}
+
+\section*{References}
+\placeholder{Add the main references after the topic is chosen. A good starting set is: 1 dataset/source paper, 1 baseline paper, 1 main model paper, and 1 or 2 related-work papers.}
+
+\end{document}
