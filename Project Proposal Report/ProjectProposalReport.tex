@@ -45,7 +45,7 @@
 }
 
 \begin{abstract}
-This project proposes a lightweight deep learning pipeline for classifying pediatric chest X-rays as normal or pneumonia. We used the public Chest X-Ray Images (Pneumonia) dataset, which contains 5,863 labeled images with an imbalanced train/validation/test split. Our methodology compares a small custom CNN baseline against transfer learning with ResNet18 and DenseNet121, and uses Grad-CAM for qualitative inspection of model attention. Evaluation will focus on accuracy, precision, recall, F1-score, AUROC, and inference time, with special emphasis on pneumonia recall because false negatives are clinically costly.
+This project proposes a lightweight deep learning pipeline for classifying pediatric chest X-rays as normal or pneumonia. We use the public Chest X-Ray Images (Pneumonia) dataset (5,863 labeled images) with its imbalanced train/validation/test split. Our methodology compares a custom CNN baseline with transfer learning using ResNet18 and DenseNet121, plus Grad-CAM for qualitative inspection. Evaluation focuses on accuracy, precision, recall, F1-score, AUROC, and inference time, with emphasis on pneumonia recall because false negatives are clinically costly.
 \end{abstract}
 
 %%
@@ -80,7 +80,7 @@ This project proposes a lightweight deep learning pipeline for classifying pedia
 \begin{teaserfigure}
   \centering
   \captionsetup{justification=centering}
-  \includegraphics[width=0.72\textwidth]{pneumonia}
+  \includegraphics[width=0.58\textwidth]{pneumonia}
   \caption{Examples shown in the dataset overview: a normal chest X-ray, bacterial pneumonia, and viral pneumonia.}
   \Description{A horizontal teaser image with three chest X-ray examples corresponding to normal, bacterial pneumonia, and viral pneumonia, matching the illustration shown in the dataset overview on Kaggle.}
 \end{teaserfigure}
@@ -163,10 +163,10 @@ We will consider the project successful if at least one transfer-learning model 
 The Kermany dataset was collected from pediatric patients at Guangzhou Women and Children's Medical Center, which introduces a substantial demographic limitation: the model is trained and evaluated on a single population, institution, and age group, and may not generalize to adult patients or images acquired with different X-ray equipment or protocols. Class imbalance is also present in the training set, with pneumonia samples outnumbering normal ones; this may push the model toward over-predicting pneumonia, artificially inflating recall while reducing precision. In addition, chest X-ray classifiers are known to exploit spurious correlations such as medical device artifacts or text annotations rather than true pathological patterns — a risk we will partially address through Grad-CAM inspection.
 
 \subsection{Limitations of the Approach}
-This approach has several technical limitations. The dataset is relatively small and imbalanced for a medical imaging problem, and the validation split is extremely small, which makes model selection noisy. The task is also simplified to binary normal-versus-pneumonia classification, whereas real clinical workflows involve multiple thoracic conditions and uncertain cases. In addition, our experiments rely on a single public dataset with no external validation, so good in-dataset performance may not transfer to other hospitals, imaging protocols, or adult populations.
+This approach has several technical limitations. The dataset is small and imbalanced, and the validation split is tiny, making model selection noisy. The task is also simplified to binary normal-versus-pneumonia classification, whereas real clinical workflows involve multiple thoracic conditions and uncertain cases. Our experiments also rely on a single public dataset with no external validation, so good in-dataset performance may not transfer to other hospitals, imaging protocols, or adult populations.
 
 \subsection{Responsible Use}
-The resulting model should be used only as an educational prototype or as a decision-support aid under clinician supervision, never as a stand-alone diagnostic or triage system. Predictions from a model trained on a single pediatric dataset are not sufficient to confirm or exclude pneumonia in real patients, and false negatives may delay necessary treatment. Any real deployment would require external multi-site validation, calibration, bias assessment, clinical oversight, and the appropriate ethical and regulatory approvals.
+The resulting model should be treated only as an educational prototype or clinician-supervised decision-support tool, not as a stand-alone diagnostic or triage system. Trained on a single pediatric dataset, it cannot confirm or exclude pneumonia in real patients. Any deployment would require multi-site external validation, calibration, bias assessment, clinical oversight, and ethical and regulatory approval.
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{ProjectProposalReport}
