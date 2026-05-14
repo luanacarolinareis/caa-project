@@ -11,7 +11,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pneumonia_classifier.config import load_config, merge_config
-from pneumonia_classifier.models.transfer_learning import (build_model, freeze_backbone, unfreeze_backbone,)
+from pneumonia_classifier.data import get_dataloaders
+from pneumonia_classifier.models.transfer_learning import (
+    build_model,
+    freeze_backbone,
+    unfreeze_backbone,
+)
+from pneumonia_classifier.train import train_model
+from pneumonia_classifier.utils import get_device, load_checkpoint, set_seed
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train a transfer-learning model.")
@@ -41,6 +48,7 @@ def main() -> None:
     args = parse_args()
     config = load_config(args.config)
     config = merge_config(config, {"training": {"seed": args.seed}})
+    set_seed(args.seed)
 
     transfer_cfg = config["models"]["transfer_learning"]
     pretrained: bool = transfer_cfg["pretrained"]
@@ -58,30 +66,57 @@ def main() -> None:
     print(f"Checkpoints : {checkpoint_dir}")
 
     model = build_model(args.model, pretrained=pretrained)
+    dataloaders = get_dataloaders(config)
+    device = get_device()
     print(f"\nModel instantiated: {args.model}")
+    print(f"Device      : {device}")
 
     # Phase 1: head-only training
     freeze_backbone(model)
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"Phase 1 -> head only, trainable params: {trainable:,}")
 
-    # TODO (Jakub -> data.py)
-    #   dataloaders = get_dataloaders(config, seed=args.seed)
-    # TODO (Jakub -> train.py)
-    #   train(model, dataloaders, config, epochs=head_only_epochs, phase="head_only")
+    checkpoint_path = checkpoint_dir / f"{args.model}_seed{args.seed}.pt"
+    head_history_path = Path(config["outputs"]["metrics_dir"]) / (
+        f"{args.model}_seed{args.seed}_head_only_history.json"
+    )
+    train_model(
+        model=model,
+        dataloaders=dataloaders,
+        config=config,
+        device=device,
+        model_name=args.model,
+        seed=args.seed,
+        max_epochs=head_only_epochs,
+        checkpoint_path=checkpoint_path,
+        history_path=head_history_path,
+        phase="head_only",
+    )
 
     # Phase 2: full fine-tuning
+    load_checkpoint(model, checkpoint_path, device)
     unfreeze_backbone(model)
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"Phase 2 -> full fine-tune, trainable params: {trainable:,}")
 
-    # TODO (Jakub -> train.py)
-    #   train(model, dataloaders, config, epochs=max_epochs, phase="fine_tune")
+    fine_history_path = Path(config["outputs"]["metrics_dir"]) / (
+        f"{args.model}_seed{args.seed}_fine_tune_history.json"
+    )
+    train_model(
+        model=model,
+        dataloaders=dataloaders,
+        config=config,
+        device=device,
+        model_name=args.model,
+        seed=args.seed,
+        max_epochs=max_epochs,
+        checkpoint_path=checkpoint_path,
+        history_path=fine_history_path,
+        phase="fine_tune",
+    )
 
-    # TODO (Jakub -> train.py/utils.py)
-    checkpoint_path = checkpoint_dir / f"{args.model}_seed{args.seed}.pt"
-    print(f"\nCheckpoint will be saved to: {checkpoint_path}")
-    print("(Training loop not yet connected!)")
+    print(f"\nSaved checkpoint: {checkpoint_path}")
+    print(f"Saved histories: {head_history_path}, {fine_history_path}")
 
 
 if __name__ == "__main__":
