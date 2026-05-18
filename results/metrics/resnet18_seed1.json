@@ -1,0 +1,19 @@
+{
+  "accuracy": 0.8108974358974359,
+  "precision": 0.7709163346613546,
+  "recall": 0.9923076923076923,
+  "sensitivity": 0.9923076923076923,
+  "specificity": 0.5085470085470085,
+  "f1": 0.8677130044843049,
+  "confusion_matrix": {
+    "tn": 119,
+    "fp": 115,
+    "fn": 3,
+    "tp": 387
+  },
+  "auroc": 0.9456169186938417,
+  "model": "resnet18",
+  "seed": 1,
+  "num_test_images": 624,
+  "inference_time_ms_per_image": 12.910019871796043
+}

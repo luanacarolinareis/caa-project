@@ -1,0 +1,19 @@
+{
+  "accuracy": 0.6522435897435898,
+  "precision": 0.6439267886855241,
+  "recall": 0.9923076923076923,
+  "sensitivity": 0.9923076923076923,
+  "specificity": 0.08547008547008547,
+  "f1": 0.781029263370333,
+  "confusion_matrix": {
+    "tn": 20,
+    "fp": 214,
+    "fn": 3,
+    "tp": 387
+  },
+  "auroc": 0.8689129958360727,
+  "model": "custom_cnn",
+  "seed": 1,
+  "num_test_images": 624,
+  "inference_time_ms_per_image": 12.258965865385107
+}
