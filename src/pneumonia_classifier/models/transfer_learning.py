@@ -4,6 +4,14 @@ import torch.nn as nn
 from torchvision import models
 
 
+def build_resnet18(pretrained: bool = True) -> nn.Module:
+    weights = models.ResNet18_Weights.IMAGENET1K_V1 if pretrained else None
+    model = models.resnet18(weights=weights)
+    in_features = model.fc.in_features
+    model.fc = nn.Linear(in_features, 1)
+    return model
+
+
 def build_densenet121(pretrained: bool = True) -> nn.Module:
     weights = models.DenseNet121_Weights.IMAGENET1K_V1 if pretrained else None
     model = models.densenet121(weights=weights)
@@ -14,8 +22,7 @@ def build_densenet121(pretrained: bool = True) -> nn.Module:
 
 def freeze_backbone(model: nn.Module) -> None:
     for name, param in model.named_parameters():
-        if "classifier" not in name:
-            param.requires_grad = False
+        param.requires_grad = _is_classifier_parameter(name)
 
 
 def unfreeze_backbone(model: nn.Module) -> None:
@@ -24,22 +31,31 @@ def unfreeze_backbone(model: nn.Module) -> None:
 
 
 def get_gradcam_target_layer(model: nn.Module) -> nn.Module:
-    # Last conv block before the global average pool in DenseNet121
-    return model.features.denseblock4.denselayer16.conv2
+    if hasattr(model, "features"):
+        return model.features.denseblock4.denselayer16.conv2
+    if hasattr(model, "layer4"):
+        return model.layer4[-1].conv2
+    raise ValueError(f"Unsupported model for Grad-CAM: {type(model).__name__}")
 
 
 def build_model(model_name: str, pretrained: bool = True) -> nn.Module:
+    if model_name == "resnet18":
+        return build_resnet18(pretrained=pretrained)
     if model_name == "densenet121":
         return build_densenet121(pretrained=pretrained)
-    # TODO (Jakub): resnet18 branch here
     raise ValueError(f"Unknown model: {model_name!r}")
 
 
+def _is_classifier_parameter(name: str) -> bool:
+    return name.startswith("classifier.") or name.startswith("fc.")
+
+
 if __name__ == "__main__":
-    model = build_model("densenet121")
-    model.eval()
-    dummy = torch.zeros(1, 3, 224, 224)
-    with torch.no_grad():
-        out = model(dummy)
-    assert out.shape == (1, 1), f"Unexpected output shape: {out.shape}"
-    print(f"Output shape: {out.shape}  (logits, compatible with BCEWithLogitsLoss)")
+    for model_name in ("resnet18", "densenet121"):
+        model = build_model(model_name)
+        model.eval()
+        dummy = torch.zeros(1, 3, 224, 224)
+        with torch.no_grad():
+            out = model(dummy)
+        assert out.shape == (1, 1), f"Unexpected output shape: {out.shape}"
+        print(f"{model_name} output shape: {out.shape}  (logits)")
