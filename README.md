@@ -78,23 +78,51 @@ pip install -r requirements.txt
 
 These commands are the intended workflow.
 
-Train the custom CNN baseline:
+### Training
+
+All three models were trained with seeds 0, 1, and 2 for reproducibility.
+
+**Custom CNN baseline:**
 
 ```powershell
 python scripts/train_baseline.py --config configs/default.yaml --seed 0
+python scripts/train_baseline.py --config configs/default.yaml --seed 1
+python scripts/train_baseline.py --config configs/default.yaml --seed 2
 ```
 
-Train a transfer-learning model:
+**ResNet18:**
+
+```powershell
+python scripts/train_transfer.py --model resnet18 --config configs/default.yaml --seed 0
+python scripts/train_transfer.py --model resnet18 --config configs/default.yaml --seed 1
+python scripts/train_transfer.py --model resnet18 --config configs/default.yaml --seed 2
+```
+
+**DenseNet121:**
 
 ```powershell
 python scripts/train_transfer.py --model densenet121 --config configs/default.yaml --seed 0
+python scripts/train_transfer.py --model densenet121 --config configs/default.yaml --seed 1
+python scripts/train_transfer.py --model densenet121 --config configs/default.yaml --seed 2
 ```
 
-Evaluate a trained checkpoint:
+### Evaluation
 
 ```powershell
-python scripts/evaluate_model.py --model densenet121 --checkpoint results/checkpoints/densenet121_seed0.pt
+python scripts/evaluate_model.py --model custom_cnn --checkpoint results/checkpoints/custom_cnn_seed0.pt --seed 0
+python scripts/evaluate_model.py --model custom_cnn --checkpoint results/checkpoints/custom_cnn_seed1.pt --seed 1
+python scripts/evaluate_model.py --model custom_cnn --checkpoint results/checkpoints/custom_cnn_seed2.pt --seed 2
+
+python scripts/evaluate_model.py --model resnet18 --checkpoint results/checkpoints/resnet18_seed0.pt --seed 0
+python scripts/evaluate_model.py --model resnet18 --checkpoint results/checkpoints/resnet18_seed1.pt --seed 1
+python scripts/evaluate_model.py --model resnet18 --checkpoint results/checkpoints/resnet18_seed2.pt --seed 2
+
+python scripts/evaluate_model.py --model densenet121 --checkpoint results/checkpoints/densenet121_seed0.pt --seed 0
+python scripts/evaluate_model.py --model densenet121 --checkpoint results/checkpoints/densenet121_seed1.pt --seed 1
+python scripts/evaluate_model.py --model densenet121 --checkpoint results/checkpoints/densenet121_seed2.pt --seed 2
 ```
+
+### Grad-CAM and result tables
 
 Generate Grad-CAM examples:
 
