@@ -25,6 +25,16 @@ results/checkpoints/
 *.pth
 *.ckpt
 
+# LaTeX build artifacts
+Additional Files/Reports/**/out/*.bbl
+Additional Files/Reports/**/out/*.blg
+Additional Files/Reports/**/out/*.aux
+Additional Files/Reports/**/out/*.out
+Additional Files/Reports/**/out/*.synctex.gz
+Additional Files/Reports/**/out/*.log
+Additional Files/Reports/**/out/*.fls
+Additional Files/Reports/**/out/*.fdb_latexmk
+
 # OS/editor files
 .DS_Store
 Thumbs.db
