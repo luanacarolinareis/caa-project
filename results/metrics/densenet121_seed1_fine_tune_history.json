@@ -1,0 +1,477 @@
+{
+  "model": "densenet121",
+  "seed": 1,
+  "phase": "fine_tune",
+  "best_epoch": 7,
+  "best_val_loss": 0.03285284712910652,
+  "history": [
+    {
+      "epoch": 1,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.9675996932515337,
+        "precision": 0.9790589451913133,
+        "recall": 0.9772903225806452,
+        "sensitivity": 0.9772903225806452,
+        "specificity": 0.9395973154362416,
+        "f1": 0.9781738344310991,
+        "confusion_matrix": {
+          "tn": 1260,
+          "fp": 81,
+          "fn": 88,
+          "tp": 3787
+        },
+        "auroc": 0.9941640085636622,
+        "loss": 0.08909099619618498
+      },
+      "val": {
+        "accuracy": 0.8125,
+        "precision": 0.7272727272727273,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 0.625,
+        "f1": 0.8421052631578947,
+        "confusion_matrix": {
+          "tn": 5,
+          "fp": 3,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.30406108498573303
+      }
+    },
+    {
+      "epoch": 2,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.9810199386503068,
+        "precision": 0.9873515745998968,
+        "recall": 0.9870967741935484,
+        "sensitivity": 0.9870967741935484,
+        "specificity": 0.9634601043997018,
+        "f1": 0.9872241579558653,
+        "confusion_matrix": {
+          "tn": 1292,
+          "fp": 49,
+          "fn": 50,
+          "tp": 3825
+        },
+        "auroc": 0.9977636333020615,
+        "loss": 0.05203609860593602
+      },
+      "val": {
+        "accuracy": 0.875,
+        "precision": 0.8,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 0.75,
+        "f1": 0.8888888888888888,
+        "confusion_matrix": {
+          "tn": 6,
+          "fp": 2,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.23799873888492584
+      }
+    },
+    {
+      "epoch": 3,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.9842791411042945,
+        "precision": 0.9899250839576337,
+        "recall": 0.9889032258064516,
+        "sensitivity": 0.9889032258064516,
+        "specificity": 0.970917225950783,
+        "f1": 0.989413891040537,
+        "confusion_matrix": {
+          "tn": 1302,
+          "fp": 39,
+          "fn": 43,
+          "tp": 3832
+        },
+        "auroc": 0.9981781530393783,
+        "loss": 0.04578879050070569
+      },
+      "val": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": {
+          "tn": 8,
+          "fp": 0,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.059019122272729874
+      }
+    },
+    {
+      "epoch": 4,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.99079754601227,
+        "precision": 0.9938064516129033,
+        "recall": 0.9938064516129033,
+        "sensitivity": 0.9938064516129033,
+        "specificity": 0.9821029082774049,
+        "f1": 0.9938064516129033,
+        "confusion_matrix": {
+          "tn": 1317,
+          "fp": 24,
+          "fn": 24,
+          "tp": 3851
+        },
+        "auroc": 0.9994659738760193,
+        "loss": 0.026523460684761267
+      },
+      "val": {
+        "accuracy": 0.8125,
+        "precision": 0.7272727272727273,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 0.625,
+        "f1": 0.8421052631578947,
+        "confusion_matrix": {
+          "tn": 5,
+          "fp": 3,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.30816134810447693
+      }
+    },
+    {
+      "epoch": 5,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.9921395705521472,
+        "precision": 0.9953488372093023,
+        "recall": 0.9940645161290322,
+        "sensitivity": 0.9940645161290322,
+        "specificity": 0.9865771812080537,
+        "f1": 0.9947062621045836,
+        "confusion_matrix": {
+          "tn": 1323,
+          "fp": 18,
+          "fn": 23,
+          "tp": 3852
+        },
+        "auroc": 0.9994036227177598,
+        "loss": 0.024673502319820934
+      },
+      "val": {
+        "accuracy": 0.8125,
+        "precision": 0.7272727272727273,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 0.625,
+        "f1": 0.8421052631578947,
+        "confusion_matrix": {
+          "tn": 5,
+          "fp": 3,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.30898162722587585
+      }
+    },
+    {
+      "epoch": 6,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.9886886503067485,
+        "precision": 0.9920061887570912,
+        "recall": 0.9927741935483871,
+        "sensitivity": 0.9927741935483871,
+        "specificity": 0.976882923191648,
+        "f1": 0.9923900425641687,
+        "confusion_matrix": {
+          "tn": 1310,
+          "fp": 31,
+          "fn": 28,
+          "tp": 3847
+        },
+        "auroc": 0.9992983570277357,
+        "loss": 0.029803059951607938
+      },
+      "val": {
+        "accuracy": 0.875,
+        "precision": 0.8,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 0.75,
+        "f1": 0.8888888888888888,
+        "confusion_matrix": {
+          "tn": 6,
+          "fp": 2,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.2351977676153183
+      }
+    },
+    {
+      "epoch": 7,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.9932898773006135,
+        "precision": 0.9963805584281282,
+        "recall": 0.9945806451612903,
+        "sensitivity": 0.9945806451612903,
+        "specificity": 0.9895600298284862,
+        "f1": 0.9954797881957897,
+        "confusion_matrix": {
+          "tn": 1327,
+          "fp": 14,
+          "fn": 21,
+          "tp": 3854
+        },
+        "auroc": 0.9996328209569171,
+        "loss": 0.02115674256514958
+      },
+      "val": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": {
+          "tn": 8,
+          "fp": 0,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.03285284712910652
+      }
+    },
+    {
+      "epoch": 8,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.9940567484662577,
+        "precision": 0.9953608247422681,
+        "recall": 0.9966451612903225,
+        "sensitivity": 0.9966451612903225,
+        "specificity": 0.9865771812080537,
+        "f1": 0.9960025789813024,
+        "confusion_matrix": {
+          "tn": 1323,
+          "fp": 18,
+          "fn": 13,
+          "tp": 3862
+        },
+        "auroc": 0.9997579081571287,
+        "loss": 0.017738373877274935
+      },
+      "val": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": {
+          "tn": 8,
+          "fp": 0,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.12483810633420944
+      }
+    },
+    {
+      "epoch": 9,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.9967407975460123,
+        "precision": 0.9984496124031008,
+        "recall": 0.9971612903225806,
+        "sensitivity": 0.9971612903225806,
+        "specificity": 0.9955257270693513,
+        "f1": 0.9978050355067786,
+        "confusion_matrix": {
+          "tn": 1335,
+          "fp": 6,
+          "fn": 11,
+          "tp": 3864
+        },
+        "auroc": 0.9998922325659715,
+        "loss": 0.011513309213839917
+      },
+      "val": {
+        "accuracy": 0.875,
+        "precision": 0.8,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 0.75,
+        "f1": 0.8888888888888888,
+        "confusion_matrix": {
+          "tn": 6,
+          "fp": 2,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.1810280978679657
+      }
+    },
+    {
+      "epoch": 10,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.9950153374233128,
+        "precision": 0.9961330239752514,
+        "recall": 0.9971612903225806,
+        "sensitivity": 0.9971612903225806,
+        "specificity": 0.9888143176733781,
+        "f1": 0.9966468919267475,
+        "confusion_matrix": {
+          "tn": 1326,
+          "fp": 15,
+          "fn": 11,
+          "tp": 3864
+        },
+        "auroc": 0.9998362319886459,
+        "loss": 0.014890807422422204
+      },
+      "val": {
+        "accuracy": 0.9375,
+        "precision": 0.8888888888888888,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 0.875,
+        "f1": 0.9411764705882353,
+        "confusion_matrix": {
+          "tn": 7,
+          "fp": 1,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.0956195816397667
+      }
+    },
+    {
+      "epoch": 11,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 5e-05,
+      "train": {
+        "accuracy": 0.9973159509202454,
+        "precision": 0.9987083440971325,
+        "recall": 0.9976774193548387,
+        "sensitivity": 0.9976774193548387,
+        "specificity": 0.9962714392244594,
+        "f1": 0.9981926155435064,
+        "confusion_matrix": {
+          "tn": 1336,
+          "fp": 5,
+          "fn": 9,
+          "tp": 3866
+        },
+        "auroc": 0.999957855235621,
+        "loss": 0.008482682817019922
+      },
+      "val": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": {
+          "tn": 8,
+          "fp": 0,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.06313655525445938
+      }
+    },
+    {
+      "epoch": 12,
+      "phase": "fine_tune",
+      "model": "densenet121",
+      "seed": 1,
+      "learning_rate": 5e-05,
+      "train": {
+        "accuracy": 0.9967407975460123,
+        "precision": 0.9981921487603306,
+        "recall": 0.9974193548387097,
+        "sensitivity": 0.9974193548387097,
+        "specificity": 0.9947800149142431,
+        "f1": 0.9978056021685814,
+        "confusion_matrix": {
+          "tn": 1334,
+          "fp": 7,
+          "fn": 10,
+          "tp": 3865
+        },
+        "auroc": 0.9996997907194919,
+        "loss": 0.012340945060624872
+      },
+      "val": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": {
+          "tn": 8,
+          "fp": 0,
+          "fn": 0,
+          "tp": 8
+        },
+        "auroc": 1.0,
+        "loss": 0.060668498277664185
+      }
+    }
+  ]
+}

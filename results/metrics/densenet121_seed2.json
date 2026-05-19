@@ -1,0 +1,19 @@
+{
+  "accuracy": 0.8189102564102564,
+  "precision": 0.7764471057884231,
+  "recall": 0.9974358974358974,
+  "sensitivity": 0.9974358974358974,
+  "specificity": 0.5213675213675214,
+  "f1": 0.8731762065095399,
+  "confusion_matrix": {
+    "tn": 122,
+    "fp": 112,
+    "fn": 1,
+    "tp": 389
+  },
+  "auroc": 0.9605413105413105,
+  "model": "densenet121",
+  "seed": 2,
+  "num_test_images": 624,
+  "inference_time_ms_per_image": 14.727270032048741
+}
