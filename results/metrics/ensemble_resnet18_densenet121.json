@@ -1,0 +1,26 @@
+{
+  "accuracy": 0.8557692307692307,
+  "precision": 0.8138075313807531,
+  "recall": 0.9974358974358974,
+  "sensitivity": 0.9974358974358974,
+  "specificity": 0.6196581196581197,
+  "f1": 0.8963133640552995,
+  "confusion_matrix": {
+    "tn": 145,
+    "fp": 89,
+    "fn": 1,
+    "tp": 389
+  },
+  "auroc": 0.9629903572211264,
+  "model": "ensemble_resnet18_densenet121",
+  "members": [
+    "resnet18_seed0",
+    "resnet18_seed1",
+    "resnet18_seed2",
+    "densenet121_seed0",
+    "densenet121_seed1",
+    "densenet121_seed2"
+  ],
+  "num_members": 6,
+  "num_test_images": 624
+}
