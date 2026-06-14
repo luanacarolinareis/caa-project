@@ -145,6 +145,10 @@ def format_markdown(summary: pd.DataFrame, task: str) -> str:
     for model in all_models:
         if model not in summary.index:
             continue
+        # Skip rows where all metrics are NaN (e.g. custom_cnn has no 3-class results)
+        mean_cols = [f"{m}_mean" for m in display_metrics if f"{m}_mean" in summary.columns]
+        if mean_cols and summary.loc[model, mean_cols].isna().all():
+            continue
         row_vals = [model]
         for m in display_metrics:
             mean_col = f"{m}_mean"
@@ -152,7 +156,9 @@ def format_markdown(summary: pd.DataFrame, task: str) -> str:
             if mean_col in summary.columns:
                 mean = summary.loc[model, mean_col]
                 std = summary.loc[model, std_col]
-                if pd.isna(std):
+                if pd.isna(mean):
+                    row_vals.append("—")
+                elif pd.isna(std):
                     row_vals.append(f"{mean:.4f}")
                 else:
                     row_vals.append(f"{mean:.4f} ± {std:.4f}")

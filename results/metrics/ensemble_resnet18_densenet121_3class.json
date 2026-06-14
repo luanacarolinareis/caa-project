@@ -1,0 +1,50 @@
+{
+  "accuracy": 0.8173076923076923,
+  "precision_macro": 0.8258637422548342,
+  "recall_macro": 0.8197259560895924,
+  "f1_macro": 0.8034952994782635,
+  "precision_per_class": {
+    "NORMAL": 0.9867549668874173,
+    "BACTERIA": 0.8639705882352942,
+    "VIRUS": 0.6268656716417911
+  },
+  "recall_per_class": {
+    "NORMAL": 0.6367521367521367,
+    "BACTERIA": 0.9710743801652892,
+    "VIRUS": 0.8513513513513513
+  },
+  "f1_per_class": {
+    "NORMAL": 0.7740259740259741,
+    "BACTERIA": 0.914396887159533,
+    "VIRUS": 0.7220630372492837
+  },
+  "confusion_matrix": [
+    [
+      149,
+      15,
+      70
+    ],
+    [
+      2,
+      235,
+      5
+    ],
+    [
+      0,
+      22,
+      126
+    ]
+  ],
+  "auroc": 0.9612918201910335,
+  "model": "ensemble_resnet18_densenet121_3class",
+  "members": [
+    "resnet18_3class_seed0",
+    "resnet18_3class_seed1",
+    "resnet18_3class_seed2",
+    "densenet121_3class_seed0",
+    "densenet121_3class_seed1",
+    "densenet121_3class_seed2"
+  ],
+  "num_members": 6,
+  "num_test_images": 624
+}

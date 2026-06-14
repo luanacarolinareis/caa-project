@@ -168,9 +168,11 @@ def analyse_model(model: str, seeds: list[int] | None, n_bins: int,
             continue
 
         y_true, y_prob = result
+        is_multiclass = len(np.unique(y_true)) > 2
         ece_values.append(compute_ece(y_true, y_prob, n_bins))
-        thresh_recall_values.append(optimal_threshold_recall(y_true, y_prob))
-        thresh_f1_values.append(optimal_threshold_f1(y_true, y_prob))
+        if not is_multiclass:
+            thresh_recall_values.append(optimal_threshold_recall(y_true, y_prob))
+            thresh_f1_values.append(optimal_threshold_f1(y_true, y_prob))
 
         # Use last seed's data for the reliability diagram
         diagram_data = reliability_diagram_data(y_true, y_prob, n_bins)
@@ -182,8 +184,8 @@ def analyse_model(model: str, seeds: list[int] | None, n_bins: int,
         "model": model,
         "ece_mean": float(np.mean(ece_values)),
         "ece_std": float(np.std(ece_values)) if len(ece_values) > 1 else None,
-        "threshold_screening_mean": float(np.mean(thresh_recall_values)),
-        "threshold_f1_mean": float(np.mean(thresh_f1_values)),
+        "threshold_screening_mean": float(np.mean(thresh_recall_values)) if thresh_recall_values else None,
+        "threshold_f1_mean": float(np.mean(thresh_f1_values)) if thresh_f1_values else None,
     }
 
     if diagram_data is not None:
@@ -249,11 +251,11 @@ def main() -> None:
         ece_str = f"{r['ece_mean']:.4f}"
         if r.get("ece_std") is not None:
             ece_str += f" ±{r['ece_std']:.4f}"
-        print(
-            f"{r['model']:<40} {ece_str:>8}  "
-            f"{r['threshold_screening_mean']:>13.4f}  "
-            f"{r['threshold_f1_mean']:>10.4f}"
-        )
+        thr_recall = r["threshold_screening_mean"]
+        thr_f1 = r["threshold_f1_mean"]
+        thr_recall_str = f"{thr_recall:>13.4f}" if thr_recall is not None else f"{'n/a (multi)':>13}"
+        thr_f1_str = f"{thr_f1:>10.4f}" if thr_f1 is not None else f"{'n/a':>10}"
+        print(f"{r['model']:<40} {ece_str:>8}  {thr_recall_str}  {thr_f1_str}")
 
 
 if __name__ == "__main__":

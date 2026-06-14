@@ -1,0 +1,5 @@
+model,accuracy_mean,accuracy_std,precision_macro_mean,precision_macro_std,recall_macro_mean,recall_macro_std,f1_macro_mean,f1_macro_std,auroc_mean,auroc_std,inference_time_ms_per_image_mean,inference_time_ms_per_image_std,f1_BACTERIA_mean,f1_BACTERIA_std,f1_NORMAL_mean,f1_NORMAL_std,f1_VIRUS_mean,f1_VIRUS_std
+custom_cnn,,,,,,,,,,,,,,,,,,
+resnet18,0.7692,0.0048,0.7995,0.0113,0.7761,0.0077,0.7551,0.0021,0.933,0.0164,12.6442,0.2706,0.8864,0.0235,0.7122,0.0152,0.6667,0.0113
+densenet121,0.8136,0.0292,0.8234,0.0226,0.8172,0.0304,0.8014,0.0315,0.9558,0.0064,15.0822,0.5231,0.8989,0.0251,0.7795,0.0479,0.7258,0.0296
+ensemble_resnet18_densenet121,0.8173,,0.8259,,0.8197,,0.8035,,0.9613,,,,0.9144,,0.774,,0.7221,
