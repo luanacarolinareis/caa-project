@@ -1,0 +1,444 @@
+{
+  "model": "resnet18",
+  "seed": 1,
+  "phase": "head_only",
+  "best_epoch": 5,
+  "best_val_loss": 0.6218860745429993,
+  "history": [
+    {
+      "epoch": 1,
+      "phase": "head_only",
+      "model": "resnet18",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.5441063174114021,
+        "precision_macro": 0.51469990487207,
+        "recall_macro": 0.4533890616667923,
+        "f1_macro": 0.4467587872442431,
+        "precision_per_class": {
+          "NORMAL": 0.6046511627906976,
+          "BACTERIA": 0.5546935608999224,
+          "VIRUS": 0.38475499092558985
+        },
+        "recall_per_class": {
+          "NORMAL": 0.35108777194298574,
+          "BACTERIA": 0.8505154639175257,
+          "VIRUS": 0.15856394913986538
+        },
+        "f1_per_class": {
+          "NORMAL": 0.44423350735643097,
+          "BACTERIA": 0.6714665831898575,
+          "VIRUS": 0.2245762711864407
+        },
+        "confusion_matrix": [
+          [
+            468,
+            707,
+            158
+          ],
+          [
+            196,
+            2145,
+            181
+          ],
+          [
+            110,
+            1015,
+            212
+          ]
+        ],
+        "auroc": 0.6979025315984853,
+        "loss": 0.9595738381193305
+      },
+      "val": {
+        "accuracy": 0.6666666666666666,
+        "precision_macro": 0.6666666666666666,
+        "recall_macro": 0.6666666666666666,
+        "f1_macro": 0.6231729055258467,
+        "precision_per_class": {
+          "NORMAL": 0.6666666666666666,
+          "BACTERIA": 0.6666666666666666,
+          "VIRUS": 0.6666666666666666
+        },
+        "recall_per_class": {
+          "NORMAL": 1.0,
+          "BACTERIA": 0.75,
+          "VIRUS": 0.25
+        },
+        "f1_per_class": {
+          "NORMAL": 0.8,
+          "BACTERIA": 0.7058823529411765,
+          "VIRUS": 0.36363636363636365
+        },
+        "confusion_matrix": [
+          [
+            8,
+            0,
+            0
+          ],
+          [
+            1,
+            6,
+            1
+          ],
+          [
+            3,
+            3,
+            2
+          ]
+        ],
+        "auroc": 0.890625,
+        "loss": 0.8064250349998474
+      }
+    },
+    {
+      "epoch": 2,
+      "phase": "head_only",
+      "model": "resnet18",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.6756548536209553,
+        "precision_macro": 0.6758092707505741,
+        "recall_macro": 0.6159619056545588,
+        "f1_macro": 0.616950482307197,
+        "precision_per_class": {
+          "NORMAL": 0.8046550290939318,
+          "BACTERIA": 0.6468010517090271,
+          "VIRUS": 0.5759717314487632
+        },
+        "recall_per_class": {
+          "NORMAL": 0.7261815453863466,
+          "BACTERIA": 0.8778747026169706,
+          "VIRUS": 0.243829468960359
+        },
+        "f1_per_class": {
+          "NORMAL": 0.7634069400630915,
+          "BACTERIA": 0.7448275862068966,
+          "VIRUS": 0.3426169206516027
+        },
+        "confusion_matrix": [
+          [
+            968,
+            307,
+            58
+          ],
+          [
+            126,
+            2214,
+            182
+          ],
+          [
+            109,
+            902,
+            326
+          ]
+        ],
+        "auroc": 0.8205077249834755,
+        "loss": 0.8011916350510161
+      },
+      "val": {
+        "accuracy": 0.6666666666666666,
+        "precision_macro": 0.6603174603174603,
+        "recall_macro": 0.6666666666666666,
+        "f1_macro": 0.6427350427350428,
+        "precision_per_class": {
+          "NORMAL": 0.6666666666666666,
+          "BACTERIA": 0.7142857142857143,
+          "VIRUS": 0.6
+        },
+        "recall_per_class": {
+          "NORMAL": 1.0,
+          "BACTERIA": 0.625,
+          "VIRUS": 0.375
+        },
+        "f1_per_class": {
+          "NORMAL": 0.8,
+          "BACTERIA": 0.6666666666666666,
+          "VIRUS": 0.46153846153846156
+        },
+        "confusion_matrix": [
+          [
+            8,
+            0,
+            0
+          ],
+          [
+            1,
+            5,
+            2
+          ],
+          [
+            3,
+            2,
+            3
+          ]
+        ],
+        "auroc": 0.9036458333333334,
+        "loss": 0.6890869140625
+      }
+    },
+    {
+      "epoch": 3,
+      "phase": "head_only",
+      "model": "resnet18",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.7058936825885979,
+        "precision_macro": 0.707192688394486,
+        "recall_macro": 0.6624240593739742,
+        "f1_macro": 0.6686995681333405,
+        "precision_per_class": {
+          "NORMAL": 0.8175411119812059,
+          "BACTERIA": 0.6803667404362946,
+          "VIRUS": 0.6236702127659575
+        },
+        "recall_per_class": {
+          "NORMAL": 0.7831957989497375,
+          "BACTERIA": 0.8532910388580491,
+          "VIRUS": 0.3507853403141361
+        },
+        "f1_per_class": {
+          "NORMAL": 0.8,
+          "BACTERIA": 0.757080035180299,
+          "VIRUS": 0.44901866921972233
+        },
+        "confusion_matrix": [
+          [
+            1044,
+            239,
+            50
+          ],
+          [
+            137,
+            2152,
+            233
+          ],
+          [
+            96,
+            772,
+            469
+          ]
+        ],
+        "auroc": 0.8452702139815029,
+        "loss": 0.7285904653818104
+      },
+      "val": {
+        "accuracy": 0.7083333333333334,
+        "precision_macro": 0.7884615384615384,
+        "recall_macro": 0.7083333333333334,
+        "f1_macro": 0.6857864357864357,
+        "precision_per_class": {
+          "NORMAL": 0.6153846153846154,
+          "BACTERIA": 0.75,
+          "VIRUS": 1.0
+        },
+        "recall_per_class": {
+          "NORMAL": 1.0,
+          "BACTERIA": 0.75,
+          "VIRUS": 0.375
+        },
+        "f1_per_class": {
+          "NORMAL": 0.7619047619047619,
+          "BACTERIA": 0.75,
+          "VIRUS": 0.5454545454545454
+        },
+        "confusion_matrix": [
+          [
+            8,
+            0,
+            0
+          ],
+          [
+            2,
+            6,
+            0
+          ],
+          [
+            3,
+            2,
+            3
+          ]
+        ],
+        "auroc": 0.8984375,
+        "loss": 0.6725313663482666
+      }
+    },
+    {
+      "epoch": 4,
+      "phase": "head_only",
+      "model": "resnet18",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.7322804314329738,
+        "precision_macro": 0.7288249115243582,
+        "recall_macro": 0.6956998348721974,
+        "f1_macro": 0.700295147215294,
+        "precision_per_class": {
+          "NORMAL": 0.8402100525131283,
+          "BACTERIA": 0.7112281857095818,
+          "VIRUS": 0.635036496350365
+        },
+        "recall_per_class": {
+          "NORMAL": 0.8402100525131283,
+          "BACTERIA": 0.8564631245043616,
+          "VIRUS": 0.39042632759910245
+        },
+        "f1_per_class": {
+          "NORMAL": 0.8402100525131283,
+          "BACTERIA": 0.7771181867242309,
+          "VIRUS": 0.48355720240852246
+        },
+        "confusion_matrix": [
+          [
+            1120,
+            164,
+            49
+          ],
+          [
+            111,
+            2160,
+            251
+          ],
+          [
+            102,
+            713,
+            522
+          ]
+        ],
+        "auroc": 0.8582130489259089,
+        "loss": 0.6781997535555683
+      },
+      "val": {
+        "accuracy": 0.75,
+        "precision_macro": 0.7582972582972584,
+        "recall_macro": 0.75,
+        "f1_macro": 0.7410192147034252,
+        "precision_per_class": {
+          "NORMAL": 0.7272727272727273,
+          "BACTERIA": 0.8333333333333334,
+          "VIRUS": 0.7142857142857143
+        },
+        "recall_per_class": {
+          "NORMAL": 1.0,
+          "BACTERIA": 0.625,
+          "VIRUS": 0.625
+        },
+        "f1_per_class": {
+          "NORMAL": 0.8421052631578947,
+          "BACTERIA": 0.7142857142857143,
+          "VIRUS": 0.6666666666666666
+        },
+        "confusion_matrix": [
+          [
+            8,
+            0,
+            0
+          ],
+          [
+            1,
+            5,
+            2
+          ],
+          [
+            2,
+            1,
+            5
+          ]
+        ],
+        "auroc": 0.9036458333333334,
+        "loss": 0.6419779658317566
+      }
+    },
+    {
+      "epoch": 5,
+      "phase": "head_only",
+      "model": "resnet18",
+      "seed": 1,
+      "learning_rate": 0.0001,
+      "train": {
+        "accuracy": 0.7449922958397535,
+        "precision_macro": 0.742657568575754,
+        "recall_macro": 0.715338424011308,
+        "f1_macro": 0.7189250852435154,
+        "precision_per_class": {
+          "NORMAL": 0.8229390681003584,
+          "BACTERIA": 0.7279863481228669,
+          "VIRUS": 0.6770472895040369
+        },
+        "recall_per_class": {
+          "NORMAL": 0.8612153038259565,
+          "BACTERIA": 0.8457573354480571,
+          "VIRUS": 0.43904263275991023
+        },
+        "f1_per_class": {
+          "NORMAL": 0.841642228739003,
+          "BACTERIA": 0.7824651504035216,
+          "VIRUS": 0.5326678765880217
+        },
+        "confusion_matrix": [
+          [
+            1148,
+            147,
+            38
+          ],
+          [
+            147,
+            2133,
+            242
+          ],
+          [
+            100,
+            650,
+            587
+          ]
+        ],
+        "auroc": 0.8650373785026654,
+        "loss": 0.6573162708884946
+      },
+      "val": {
+        "accuracy": 0.7916666666666666,
+        "precision_macro": 0.8059163059163059,
+        "recall_macro": 0.7916666666666666,
+        "f1_macro": 0.7854636591478696,
+        "precision_per_class": {
+          "NORMAL": 0.7272727272727273,
+          "BACTERIA": 0.8571428571428571,
+          "VIRUS": 0.8333333333333334
+        },
+        "recall_per_class": {
+          "NORMAL": 1.0,
+          "BACTERIA": 0.75,
+          "VIRUS": 0.625
+        },
+        "f1_per_class": {
+          "NORMAL": 0.8421052631578947,
+          "BACTERIA": 0.8,
+          "VIRUS": 0.7142857142857143
+        },
+        "confusion_matrix": [
+          [
+            8,
+            0,
+            0
+          ],
+          [
+            1,
+            6,
+            1
+          ],
+          [
+            2,
+            1,
+            5
+          ]
+        ],
+        "auroc": 0.90625,
+        "loss": 0.6218860745429993
+      }
+    }
+  ]
+}
