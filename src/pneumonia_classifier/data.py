@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any
 
 import random
-import re
 
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -276,11 +275,11 @@ def _resample_val_from_train(
     for sample in train_ds.samples:
         by_class.setdefault(sample[1], []).append(sample)
 
+    rng = random.Random(42)
     moved: list[tuple[Path, int]] = []
     for label in sorted(by_class):
         pool = by_class[label]
-        random.seed(42)  # deterministic
-        chosen = random.sample(pool, min(samples_per_class, len(pool)))
+        chosen = rng.sample(pool, min(samples_per_class, len(pool)))
         moved.extend(chosen)
 
     moved_set = {s[0] for s in moved}

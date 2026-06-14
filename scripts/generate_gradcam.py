@@ -25,25 +25,13 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from pneumonia_classifier.config import load_config, is_three_class, get_num_classes
-from pneumonia_classifier.data import THREE_CLASS_NAMES, THREE_CLASS_MAP
+from pneumonia_classifier.data import THREE_CLASS_NAMES, THREE_CLASS_MAP, _label_from_filename
 from pneumonia_classifier.models.transfer_learning import (build_model, get_gradcam_target_layer,)
 from pneumonia_classifier.visualization.gradcam import (generate_gradcam, load_image,)
 
 
 BINARY_LABEL_DIRS = {"NORMAL": 0, "PNEUMONIA": 1}
 BINARY_CLASS_NAMES = ["NORMAL", "PNEUMONIA"]
-
-
-def _label_from_filename(filename: str, parent_dir: str) -> int:
-    """Derive the three-class label from the image filename."""
-    if parent_dir.upper() == "NORMAL":
-        return THREE_CLASS_MAP["NORMAL"]
-    name_lower = filename.lower()
-    if "_bacteria_" in name_lower or name_lower.startswith("bacteria"):
-        return THREE_CLASS_MAP["BACTERIA"]
-    if "_virus_" in name_lower or name_lower.startswith("virus"):
-        return THREE_CLASS_MAP["VIRUS"]
-    return THREE_CLASS_MAP["BACTERIA"]
 
 
 def _pick_images_binary(

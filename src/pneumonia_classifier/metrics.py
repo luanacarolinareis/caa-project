@@ -71,9 +71,6 @@ def compute_multiclass_metrics(
         "f1_macro": float(
             f1_score(labels, predictions, average="macro", zero_division=0)
         ),
-        "f1": float(
-            f1_score(labels, predictions, average="macro", zero_division=0)
-        ),
     }
 
     # Per-class metrics
