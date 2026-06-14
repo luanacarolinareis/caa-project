@@ -40,12 +40,22 @@ class GradCAM:
         image_tensor = image_tensor.unsqueeze(0) if image_tensor.ndim == 3 else image_tensor
 
         logits = self.model(image_tensor)
-        if class_idx is None:
-            class_idx = int(logits.squeeze() > 0)
+        num_outputs = logits.shape[-1]
 
-        self.model.zero_grad()
-        target = logits[:, 0] if logits.shape[-1] == 1 else logits[:, class_idx]
-        scalar = target if class_idx == 1 else -target
+        if num_outputs == 1:
+            # Binary classification (single logit)
+            if class_idx is None:
+                class_idx = int(logits.squeeze() > 0)
+            self.model.zero_grad()
+            target = logits[:, 0]
+            scalar = target if class_idx == 1 else -target
+        else:
+            # Multi-class classification
+            if class_idx is None:
+                class_idx = int(logits.argmax(dim=1).item())
+            self.model.zero_grad()
+            scalar = logits[:, class_idx]
+
         scalar.backward()
 
         weights = self._gradients.mean(dim=(2, 3), keepdim=True)
@@ -96,8 +106,16 @@ def save_gradcam(overlay: np.ndarray, output_path: str | Path,) -> Path:
     return out
 
 
-def generate_gradcam(model: nn.Module, target_layer: nn.Module, image_path: str | Path, output_path: str | Path,
-    image_size: int = 224, class_idx: int | None = None, alpha: float = 0.4,) -> tuple[Path, int]:
+def generate_gradcam(
+    model: nn.Module,
+    target_layer: nn.Module,
+    image_path: str | Path,
+    output_path: str | Path,
+    image_size: int = 224,
+    class_idx: int | None = None,
+    alpha: float = 0.4,
+    class_names: list[str] | None = None,
+) -> tuple[Path, int, str]:
     """End-to-end Grad-CAM: load image, compute heatmap, save overlay.
 
     Works for any model. Pass the appropriate target layer:
@@ -106,7 +124,7 @@ def generate_gradcam(model: nn.Module, target_layer: nn.Module, image_path: str 
     
     Use ``get_gradcam_target_layer`` from transfer_learning.py to select automatically.
 
-    Returns (saved_path, predicted_class_idx).
+    Returns (saved_path, predicted_class_idx, predicted_class_name).
     """
     tensor, rgb = load_image(image_path, image_size=image_size)
     device = next(model.parameters()).device
@@ -114,8 +132,21 @@ def generate_gradcam(model: nn.Module, target_layer: nn.Module, image_path: str 
 
     with GradCAM(model, target_layer) as gc:
         heatmap = gc(tensor, class_idx=class_idx)
-        pred_class = int(model(tensor.unsqueeze(0) if tensor.ndim == 3 else tensor).squeeze() > 0)
+        inp = tensor.unsqueeze(0) if tensor.ndim == 3 else tensor
+        logits = model(inp)
+        if logits.shape[-1] == 1:
+            pred_class = int(logits.squeeze() > 0)
+        else:
+            pred_class = int(logits.argmax(dim=1).item())
+
+    # Resolve class name
+    if class_names is not None and pred_class < len(class_names):
+        pred_name = class_names[pred_class]
+    elif logits.shape[-1] == 1:
+        pred_name = "PNEUMONIA" if pred_class else "NORMAL"
+    else:
+        pred_name = str(pred_class)
 
     overlay = overlay_heatmap(heatmap, rgb, alpha=alpha)
     saved = save_gradcam(overlay, output_path)
-    return saved, pred_class
+    return saved, pred_class, pred_name

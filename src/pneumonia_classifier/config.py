@@ -53,8 +53,14 @@ def validate_config(config: dict[str, Any]) -> None:
         raise ValueError("training.learning_rate must be a positive number")
 
     class_names = config["data"].get("class_names", [])
-    if class_names != ["NORMAL", "PNEUMONIA"]:
-        raise ValueError("data.class_names must be ['NORMAL', 'PNEUMONIA']")
+    valid_class_sets = [
+        ["NORMAL", "PNEUMONIA"],
+        ["NORMAL", "BACTERIA", "VIRUS"],
+    ]
+    if class_names not in valid_class_sets:
+        raise ValueError(
+            f"data.class_names must be one of {valid_class_sets}, got {class_names}"
+        )
 
 
 def merge_config(
@@ -77,3 +83,13 @@ def _deep_update(target: dict[str, Any], updates: dict[str, Any]) -> None:
             _deep_update(target[key], value)
         else:
             target[key] = value
+
+
+def is_three_class(config: dict[str, Any]) -> bool:
+    """Return True when the config describes a three-class task."""
+    return len(config["data"].get("class_names", [])) == 3
+
+
+def get_num_classes(config: dict[str, Any]) -> int:
+    """Return the number of output classes (1 for binary, 3 for three-class)."""
+    return 3 if is_three_class(config) else 1

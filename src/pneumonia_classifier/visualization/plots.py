@@ -88,10 +88,11 @@ def plot_training_curves(history: dict[str, list[float]], model_name: str, outpu
 
 
 def plot_confusion_matrix(cm: np.ndarray, model_name: str, class_names: list[str] | None = None,  output_dir: Path = FIGURES_DIR,) -> Path:
-    """Heatmap of a 2x2 confusion matrix."""
+    """Heatmap of a confusion matrix (supports any NxN size)."""
     if class_names is None:
         class_names = ["NORMAL", "PNEUMONIA"]
-    fig, ax = plt.subplots(figsize=(5, 4))
+    n = len(class_names)
+    fig, ax = plt.subplots(figsize=(max(5, n + 2), max(4, n + 1)))
     sns.heatmap(
         cm,
         annot=True,
