@@ -15,5 +15,5 @@
   "model": "resnet18",
   "seed": 0,
   "num_test_images": 624,
-  "inference_time_ms_per_image": 13.024851762816652
+  "inference_time_ms_per_image": 13.146378685912797
 }
