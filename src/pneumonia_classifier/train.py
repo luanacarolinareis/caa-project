@@ -185,7 +185,7 @@ def train_model(
             f"{phase} epoch {epoch:03d}/{max_epochs} "
             f"train_loss={train_metrics['loss']:.4f} "
             f"val_loss={val_metrics['loss']:.4f} "
-            f"val_f1={val_metrics['f1']:.4f}"
+            f"val_f1={val_metrics.get('f1_macro', val_metrics.get('f1', 0)):.4f}"
         )
 
         if val_metrics["loss"] < best_val_loss:

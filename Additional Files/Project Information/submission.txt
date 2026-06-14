@@ -1,0 +1,27 @@
+Further information for the final project.
+
+Submission should be made through the classroom assignment
+https://classroom.github.com/a/vfAwOX_j
+
+Submission dealine: 15/06/2026 23:59
+
+Mandatory repository contents:
+|_README.md
+|_code
+|_report
+|_presentation slides
+
+
+Details:
+
+* Code Repository (50%)
+- Clean, documented code; README with setup instructions; dependencies (pyproject.toml or requirements.txt)
+- Example usage; Reproducible results
+
+* Written Report (30%)
+- 10-12 pages (excluding references, appendices)
+- Conference paper format (template: https://www.springer.com/gp/computer-science/lncs/conference-proceedings-guidelines)
+
+* Presentation (20%)
+- Max 13 minutes: 10 minutes presentation + 3 Q&A
+- All team members must present
