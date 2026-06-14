@@ -1,0 +1,57 @@
+This is BibTeX, Version 0.99e
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: FinalProjectReport.aux
+Reallocating 'name_of_file' (item size: 1) to 21 items.
+The style file: ACM-Reference-Format.bst
+Reallocating 'name_of_file' (item size: 1) to 19 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 6000 items.
+Database file #1: FinalProjectReport.bib
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'glb_str_end' (item size: 4) to 20 items.
+Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
+Reallocating 'global_strs' (item size: 1) to 4000000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 9000 items.
+You've used 6 entries,
+            6056 wiz_defined-function locations,
+            1524 strings with 20149 characters,
+and the built_in function-call counts, 8447 in all, are:
+= -- 904
+> -- 473
+< -- 0
++ -- 169
+- -- 162
+* -- 758
+:= -- 947
+add.period$ -- 30
+call.type$ -- 6
+change.case$ -- 78
+chr.to.int$ -- 5
+cite$ -- 6
+duplicate$ -- 626
+empty$ -- 439
+format.name$ -- 185
+if$ -- 1887
+int.to.chr$ -- 3
+int.to.str$ -- 1
+missing$ -- 19
+newline$ -- 106
+num.names$ -- 41
+pop$ -- 272
+preamble$ -- 1
+purify$ -- 124
+quote$ -- 0
+skip$ -- 238
+stack$ -- 0
+substring$ -- 534
+swap$ -- 69
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 160
+warning$ -- 0
+while$ -- 30
+width$ -- 0
+write$ -- 174
