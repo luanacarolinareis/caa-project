@@ -1,6 +1,6 @@
 # Pneumonia Classification from Pediatric Chest X-Rays
 
-This project trains and evaluates lightweight deep learning models for binary pneumonia classification from pediatric chest X-ray images. The planned comparison includes a small custom CNN baseline, ResNet18, and DenseNet121, evaluated with classification metrics, inference time, and Grad-CAM visual sanity checks.
+This project trains and evaluates deep learning models for pneumonia classification from pediatric chest X-ray images. It covers two tasks: binary classification (NORMAL vs PNEUMONIA) as a baseline, and a three-class extension (NORMAL vs BACTERIAL PNEUMONIA vs VIRAL PNEUMONIA) as the main innovation. Models compared include a custom CNN baseline, ResNet18, and DenseNet121, evaluated with classification metrics, inference time, Grad-CAM visual explanations, calibration analysis, and ensemble methods.
 
 The project is based on the public Kaggle/Kermany Chest X-Ray Images (Pneumonia) dataset. This repository is for educational experimentation only and is not intended for clinical diagnosis or real-world triage.
 
@@ -17,8 +17,16 @@ The project is based on the public Kaggle/Kermany Chest X-Ray Images (Pneumonia)
 - [Project Structure](#project-structure)
 - [Dataset](#dataset)
 - [Setup](#setup)
-- [Example Usage](#example-usage)
-- [Planned Outputs](#planned-outputs)
+- [Baseline: Binary Classification](#baseline-binary-classification)
+  - [Training](#training)
+  - [Evaluation](#evaluation)
+  - [Grad-CAM and Result Tables](#grad-cam-and-result-tables)
+- [Innovation: Three-Class Classification and Beyond](#innovation-three-class-classification-and-beyond)
+  - [Three-Class Training](#three-class-training)
+  - [Three-Class Evaluation](#three-class-evaluation)
+  - [Ensemble](#ensemble)
+  - [Calibration Analysis](#calibration-analysis)
+- [Outputs](#outputs)
 - [Notes](#notes)
 
 ## Project Structure
@@ -26,12 +34,13 @@ The project is based on the public Kaggle/Kermany Chest X-Ray Images (Pneumonia)
 ```text
 Project/
   Additional Files/           Reports, presentation, template, and supporting material
-  configs/                    Experiment configuration files
+  configs/                    Experiment configuration files (default.yaml, three_class.yaml)
   data/                       Dataset placement instructions only
+  innovation/                 Three-class training, evaluation, ensemble, and calibration scripts
   notebooks/                  Dataset checks and final experiment notebook
   results/                    Generated metrics, figures, Grad-CAM outputs, checkpoints
-  scripts/                    Command-line entry points
-  src/pneumonia_classifier/   Reusable project code  
+  scripts/                    Command-line entry points for the binary baseline
+  src/pneumonia_classifier/   Reusable project code
 ```
 
 ## Dataset
@@ -57,7 +66,7 @@ data/chest_xray/
     PNEUMONIA/
 ```
 
-The raw dataset should not be committed to Git.
+The raw dataset should not be committed to Git. The three-class labels (BACTERIA / VIRUS) are derived automatically from the filenames inside the PNEUMONIA directories: no additional annotation is needed.
 
 ## Setup
 
@@ -74,13 +83,15 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-## Example Usage
+---
 
-These commands are the intended workflow.
+## Baseline: Binary Classification
+
+Binary classification between NORMAL and PNEUMONIA using a custom CNN, ResNet18, and DenseNet121.
 
 ### Training
 
-All three models were trained with seeds 0, 1, and 2 for reproducibility.
+All models were trained with seeds 0, 1, and 2 for reproducibility.
 
 **Custom CNN baseline:**
 
@@ -122,7 +133,7 @@ python scripts/evaluate_model.py --model densenet121 --checkpoint results/checkp
 python scripts/evaluate_model.py --model densenet121 --checkpoint results/checkpoints/densenet121_seed2.pt --seed 2
 ```
 
-### Grad-CAM and result tables
+### Grad-CAM and Result Tables
 
 Generate Grad-CAM examples:
 
@@ -136,7 +147,70 @@ Build final result tables:
 python scripts/make_result_tables.py
 ```
 
-## Planned Outputs
+---
+
+## Innovation: Three-Class Classification and Beyond
+
+The Kermany dataset encodes bacterial and viral subtypes in the filenames (`person100_bacteria_4.jpeg` vs `person154_virus_2.jpeg`). Since bacterial and viral pneumonia require different treatments, we extended the problem to three-class classification: NORMAL, BACTERIA, and VIRUS. This section also covers an ensemble of the best-performing models and a calibration analysis.
+
+### Three-Class Training
+
+ResNet18 and DenseNet121 are trained with seeds 0, 1, and 2:
+
+```powershell
+python innovation/train_three_class.py --model resnet18 --seed 0
+python innovation/train_three_class.py --model resnet18 --seed 1
+python innovation/train_three_class.py --model resnet18 --seed 2
+
+python innovation/train_three_class.py --model densenet121 --seed 0
+python innovation/train_three_class.py --model densenet121 --seed 1
+python innovation/train_three_class.py --model densenet121 --seed 2
+```
+
+### Three-Class Evaluation
+
+```powershell
+python innovation/evaluate_three_class.py --model resnet18 --checkpoint results/checkpoints/resnet18_3class_seed0.pt --seed 0
+python innovation/evaluate_three_class.py --model resnet18 --checkpoint results/checkpoints/resnet18_3class_seed1.pt --seed 1
+python innovation/evaluate_three_class.py --model resnet18 --checkpoint results/checkpoints/resnet18_3class_seed2.pt --seed 2
+
+python innovation/evaluate_three_class.py --model densenet121 --checkpoint results/checkpoints/densenet121_3class_seed0.pt --seed 0
+python innovation/evaluate_three_class.py --model densenet121 --checkpoint results/checkpoints/densenet121_3class_seed1.pt --seed 1
+python innovation/evaluate_three_class.py --model densenet121 --checkpoint results/checkpoints/densenet121_3class_seed2.pt --seed 2
+```
+
+Build result tables for the three-class task:
+
+```powershell
+python scripts/make_result_tables.py --task three_class
+```
+
+Generate Grad-CAM examples for three-class models:
+
+```powershell
+python scripts/generate_gradcam.py --config configs/three_class.yaml --model densenet121 --checkpoint results/checkpoints/densenet121_3class_seed0.pt
+```
+
+### Ensemble
+
+Averages the probabilities of all ResNet18 and DenseNet121 checkpoints:
+
+```powershell
+python innovation/ensemble.py                                    # binary
+python innovation/ensemble.py --config configs/three_class.yaml  # three-class
+```
+
+### Calibration Analysis
+
+Analyses model calibration (ECE, reliability diagrams) and finds optimal decision thresholds for two clinical scenarios: screening (maximise recall) and assisted diagnosis (maximise F1). Requires the `_probs.json` files produced by the evaluation scripts above.
+
+```powershell
+python innovation/calibration_analysis.py
+```
+
+---
+
+## Outputs
 
 - Metrics saved under `results/metrics/`.
 - Figures saved under `results/figures/`.
@@ -145,8 +219,9 @@ python scripts/make_result_tables.py
 
 ## Notes
 
-- The provided Kaggle split will be used as-is for train/validation/test.
-- Images will be resized to `224 x 224`.
-- Grayscale X-rays will be converted to 3-channel RGB for pretrained models.
-- ImageNet normalization will be used for ResNet18 and DenseNet121.
+- The provided Kaggle split is used as-is for train/validation/test.
+- Images are resized to `224 x 224`.
+- Grayscale X-rays are converted to 3-channel RGB for pretrained models.
+- ImageNet normalisation is used for ResNet18 and DenseNet121.
 - Pneumonia recall is especially important because false negatives are clinically costly.
+- Three-class labels are derived from filenames without any manual annotation.
