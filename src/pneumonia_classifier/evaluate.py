@@ -100,4 +100,9 @@ def evaluate_model(
         }
     )
     save_json(metrics, output_path)
+
+    # Save raw probabilities alongside metrics for calibration analysis
+    probs_path = Path(output_path).with_name(Path(output_path).stem + "_probs.json")
+    save_json({"y_true": y_true, "y_prob": y_prob, "model": model_name, "seed": seed}, probs_path)
+
     return metrics
