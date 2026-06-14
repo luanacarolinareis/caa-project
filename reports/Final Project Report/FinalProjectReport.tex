@@ -16,7 +16,7 @@
 \usepackage{booktabs}
 \usepackage{amsmath}
 \usepackage{subcaption}
-\usepackage[section]{placeins} % keep floats within the section that defines them
+\usepackage{placeins} % provides \FloatBarrier (used manually in the appendix)
 \usepackage{eso-pic}   % absolute placement of the cover-page logos
 %
 % If you use the hyperref package, please uncomment the following two lines
@@ -166,19 +166,22 @@ ImageNet-pretrained networks for medical image classification, a strategy
 that remains a standard and competitive baseline.
 
 Transfer learning is particularly attractive in the medical domain because
-labelled data is limited: features learned on ImageNet transfer well to
-CXRs, and only the classifier head (and optionally the deeper layers) needs
-to be retrained~\cite{ref_kermany,ref_chexnet}. To make such models
+labelled data is limited: features learned on ImageNet~\cite{ref_imagenet}
+transfer well to CXRs, and only the classifier head (and optionally the
+deeper layers) needs to be retrained~\cite{ref_kermany,ref_chexnet}. This
+approach has been applied repeatedly to pneumonia detection on the Kermany
+dataset with strong results~\cite{ref_rahman}. To make such models
 trustworthy, two complementary tools are widely used. Grad-CAM~\cite{ref_gradcam}
 produces class-discriminative heatmaps that reveal which image regions a CNN
 relies on, helping to detect spurious correlations. Calibration analysis,
 summarised by the Expected Calibration Error and reliability
-diagrams~\cite{ref_calibration}, quantifies whether predicted probabilities
-reflect true correctness likelihood---an important property when a model's
-output is used to set a decision threshold in a screening or
+diagrams~\cite{ref_calibration,ref_naeini}, quantifies whether predicted
+probabilities reflect true correctness likelihood---an important property
+when a model's output is used to set a decision threshold in a screening or
 assisted-diagnosis pipeline. Finally, ensembling independently trained
 models is a simple and reliable way to reduce variance and improve
-robustness~\cite{ref_resnet,ref_densenet}.
+robustness~\cite{ref_ensemble}, and ensembles of CNNs have been shown to
+boost pneumonia-detection performance specifically~\cite{ref_kundu}.
 
 Most prior work on the Kermany dataset addresses only the binary task. The
 bacterial-versus-viral distinction is encoded in the filenames but is
@@ -188,7 +191,7 @@ analyses it under the same reproducible protocol as the binary baseline.
 \section{Dataset}
 
 We use the Kermany pediatric ``Chest X-Ray Images
-(Pneumonia)'' dataset~\cite{ref_kermany}, which contains
+(Pneumonia)'' dataset~\cite{ref_kermany,ref_kaggle}, which contains
 anterior--posterior CXRs of pediatric patients (ages 1--5) collected at the
 Guangzhou Women and Children's Medical Center. The dataset ships with a
 fixed train/validation/test split and two top-level classes, NORMAL and
@@ -220,7 +223,7 @@ Test  & 234     & 242     & 148     & 624 \\
 \end{tabular}
 \end{table}
 
-\begin{figure}[!ht]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{class_distribution.png}
 \caption{Binary class distribution by split. \emph{Left:} the training and
@@ -284,7 +287,9 @@ three-class task uses categorical cross-entropy. We use a
 validation loss and early stopping (patience 5). The checkpoint with the
 lowest validation loss is retained. To assess robustness, every model is
 trained with three random seeds ($0$, $1$, $2$), and results are reported
-as mean\,$\pm$\,standard deviation.
+as mean\,$\pm$\,standard deviation. All models are implemented in
+PyTorch~\cite{ref_pytorch}, and metrics are computed with
+scikit-learn~\cite{ref_scikit}.
 
 \subsection{Ensemble}
 
@@ -340,7 +345,7 @@ numbers on the full 624-image test set instead. The custom CNN, by
 contrast, exhibited markedly less stable validation behaviour across seeds,
 foreshadowing the high variance reported below.
 
-\begin{figure}[!ht]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{densenet121_training_curves.png}
 \caption{Binary DenseNet121 training curves across the three seeds.
@@ -351,7 +356,6 @@ the validation split is too small to discriminate between checkpoints.}
 \label{fig:curves}
 \end{figure}
 
-\FloatBarrier
 \subsection{Binary Classification}
 
 Table~\ref{tab:binary} reports the binary results across three seeds, and
@@ -382,7 +386,7 @@ DenseNet121 & 0.841 & 0.799 & \textbf{0.997} & \textbf{0.581} & 0.887 & \textbf{
 \end{tabular}
 \end{table}
 
-\begin{figure}[!ht]
+\begin{figure}[t]
 \centering
 \begin{subfigure}{0.62\textwidth}
 \includegraphics[width=\textwidth]{metric_comparison_binary.png}
@@ -411,7 +415,6 @@ behaviour is the expected and arguably desirable bias for a screening tool,
 where a missed pneumonia (false negative) is more dangerous than a false
 alarm, but it does indicate room for improvement on the NORMAL class.
 
-\FloatBarrier
 \subsection{Three-Class Classification}
 
 Table~\ref{tab:threeclass} reports the three-class results and
@@ -442,7 +445,7 @@ DenseNet121 & $0.814\pm0.029$ & $0.823\pm0.023$ & $0.817\pm0.030$ & $0.801\pm0.0
 \end{tabular}}
 \end{table}
 
-\begin{figure}[!ht]
+\begin{figure}[t]
 \centering
 \begin{subfigure}{0.52\textwidth}
 \includegraphics[width=\textwidth]{metric_comparison_3class.png}
@@ -460,7 +463,6 @@ NORMAL images predicted as VIRUS; BACTERIA is recognised almost perfectly.}
 \label{fig:threeclass}
 \end{figure}
 
-\FloatBarrier
 \subsection{Error Analysis}
 
 The per-class breakdown of the ensemble is the most informative result.
@@ -501,7 +503,6 @@ screening-friendly direction of error. This mirrors the known clinical
 difficulty of distinguishing subtle viral infiltrates from normal vascular
 markings.
 
-\FloatBarrier
 \subsection{Inference Cost}
 
 All models are lightweight at inference. On our hardware the per-image
@@ -512,7 +513,6 @@ meaningfully faster than the transfer-learning models, so its lower
 accuracy is not compensated by any speed advantage---another reason to
 prefer the pretrained backbones.
 
-\FloatBarrier
 \subsection{Calibration and Decision Thresholds}
 
 Table~\ref{tab:calibration} reports the calibration analysis. The
@@ -556,7 +556,7 @@ can afford a much lower threshold. Exposing these two operating points
 makes the same trained model usable in both a high-sensitivity triage mode
 and a balanced assisted-diagnosis mode, without retraining.
 
-\begin{figure}[!ht]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{reliability_diagrams.png}
 \caption{Reliability diagrams. The dashed diagonal is perfect calibration;
@@ -566,7 +566,6 @@ the high-confidence bins.}
 \label{fig:reliability}
 \end{figure}
 
-\FloatBarrier
 \subsection{Grad-CAM Visual Explanations}
 
 Figure~\ref{fig:gradcambin} shows binary Grad-CAM overlays for DenseNet121
@@ -580,7 +579,7 @@ the NORMAL$\rightarrow$VIRUS failure shows diffuse activation over
 otherwise normal lungs, visually corroborating the dominant error mode
 identified in Table~\ref{tab:perclass}.
 
-\begin{figure}[!ht]
+\begin{figure}[t]
 \centering
 \begin{subfigure}{0.24\textwidth}
 \includegraphics[width=\textwidth]{densenet121_tp_pneumonia_person100_bacteria_4.png}
@@ -604,7 +603,7 @@ FN illustrate the failure modes behind the imperfect specificity.}
 \label{fig:gradcambin}
 \end{figure}
 
-\begin{figure}[!ht]
+\begin{figure}[t]
 \centering
 \begin{subfigure}{0.32\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_correct_BACTERIA_person100_bacteria_4.png}
@@ -667,26 +666,61 @@ $0.804$ on the three-class task. Calibration, threshold optimisation, and
 Grad-CAM analyses added interpretability and operational flexibility.
 
 Future work includes addressing class imbalance with weighted losses or
-focal loss, temperature scaling to improve calibration, stronger backbones
-and test-time augmentation, and---most importantly---external validation on
-independent CXR datasets to test generalisation beyond the single source
-used here. All code, configurations, and scripts needed to reproduce every
+focal loss~\cite{ref_focal}, temperature scaling~\cite{ref_calibration} to
+improve calibration, stronger backbones and test-time augmentation,
+and---most importantly---external validation on independent CXR datasets to
+test generalisation beyond the single source used here. All code, configurations, and scripts needed to reproduce every
 number and figure in this report are released in the accompanying
 repository.
 
 %
 % ---- Bibliography ----
 %
-\begin{thebibliography}{10}
+\begin{thebibliography}{20}
+
+% --- References carried over from the project proposal report ---
+
+\bibitem{ref_resnet}
+He, K., Zhang, X., Ren, S., Sun, J.: Deep residual learning for image
+recognition. In: Proceedings of the IEEE Conference on Computer Vision and
+Pattern Recognition (CVPR), pp. 770--778. IEEE, Las Vegas, NV, USA (2016).
+\url{https://openaccess.thecvf.com/content_cvpr_2016/html/He_Deep_Residual_Learning_CVPR_2016_paper.html}
+
+\bibitem{ref_densenet}
+Huang, G., Liu, Z., van der Maaten, L., Weinberger, K.Q.: Densely connected
+convolutional networks. In: Proceedings of the IEEE Conference on Computer
+Vision and Pattern Recognition (CVPR), pp. 4700--4708. IEEE, Honolulu, HI,
+USA (2017).
+\url{https://openaccess.thecvf.com/content_cvpr_2017/html/Huang_Densely_Connected_Convolutional_CVPR_2017_paper.html}
+
 \bibitem{ref_kermany}
-Kermany, D.S., Goldbaum, M., Cai, W., et al.: Identifying medical diagnoses
-and treatable diseases by image-based deep learning. Cell \textbf{172}(5),
-1122--1131 (2018). \doi{10.1016/j.cell.2018.02.010}
+Kermany, D.S., Goldbaum, M., Cai, W., Valentim, C.C.S., Liang, H., Baxter,
+S.L., McKeown, A., Yang, G., Wu, X., Yan, F., Dong, J., Prasadha, M., Pei,
+J., Ting, M., Zhu, J., Li, C., Hewett, S., Dong, J., Sun, I., Wang, J.,
+Clark, K.J., Brown, S.M., Ostmo, A., Wilson, C.S., Zhang, K.: Identifying
+medical diagnoses and treatable diseases by image-based deep learning.
+Cell \textbf{172}(5), 1122--1131 (2018). \doi{10.1016/j.cell.2018.02.010}
+
+\bibitem{ref_kaggle}
+Kermany, D.S., Zhang, K., Goldbaum, M.: Chest X-Ray Images (Pneumonia).
+\url{https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia},
+last accessed 2026-03-29
 
 \bibitem{ref_chexnet}
-Rajpurkar, P., Irvin, J., Zhu, K., et al.: CheXNet: Radiologist-level
-pneumonia detection on chest X-rays with deep learning.
-arXiv:1711.05225 (2017)
+Rajpurkar, P., Irvin, J., Zhu, K., Yang, B., Mehta, H., Duan, T., Ding, D.,
+Bagul, A., Langlotz, C.P., Shpanskaya, K., Lungren, M.P., Ng, A.Y.: CheXNet:
+Radiologist-level pneumonia detection on chest X-rays with deep learning.
+arXiv preprint arXiv:1711.05225 (2017).
+\url{https://arxiv.org/abs/1711.05225}
+
+\bibitem{ref_gradcam}
+Selvaraju, R.R., Cogswell, M., Das, A., Vedantam, R., Parikh, D., Batra, D.:
+Grad-CAM: Visual explanations from deep networks via gradient-based
+localization. In: Proceedings of the IEEE International Conference on
+Computer Vision (ICCV), pp. 618--626. IEEE, Venice, Italy (2017).
+\url{https://openaccess.thecvf.com/content_iccv_2017/html/Selvaraju_Grad-CAM_Visual_Explanations_ICCV_2017_paper.html}
+
+% --- Additional references for the three-class extension and analyses ---
 
 \bibitem{ref_chestxray14}
 Wang, X., Peng, Y., Lu, L., Lu, Z., Bagheri, M., Summers, R.M.:
@@ -695,25 +729,37 @@ weakly-supervised classification and localization of common thorax
 diseases. In: IEEE CVPR, pp. 2097--2106 (2017).
 \doi{10.1109/CVPR.2017.369}
 
-\bibitem{ref_resnet}
-He, K., Zhang, X., Ren, S., Sun, J.: Deep residual learning for image
-recognition. In: IEEE CVPR, pp. 770--778 (2016).
-\doi{10.1109/CVPR.2016.90}
-
-\bibitem{ref_densenet}
-Huang, G., Liu, Z., van der Maaten, L., Weinberger, K.Q.: Densely
-connected convolutional networks. In: IEEE CVPR, pp. 4700--4708 (2017).
-\doi{10.1109/CVPR.2017.243}
-
-\bibitem{ref_gradcam}
-Selvaraju, R.R., Cogswell, M., Das, A., Vedantam, R., Parikh, D., Batra,
-D.: Grad-CAM: Visual explanations from deep networks via gradient-based
-localization. In: IEEE ICCV, pp. 618--626 (2017).
-\doi{10.1109/ICCV.2017.74}
-
 \bibitem{ref_calibration}
 Guo, C., Pleiss, G., Sun, Y., Weinberger, K.Q.: On calibration of modern
-neural networks. In: ICML, pp. 1321--1330 (2017)
+neural networks. In: Proceedings of the 34th International Conference on
+Machine Learning (ICML), vol.~70, pp. 1321--1330 (2017)
+
+\bibitem{ref_naeini}
+Naeini, M.P., Cooper, G.F., Hauskrecht, M.: Obtaining well calibrated
+probabilities using Bayesian binning. In: Proceedings of the 29th AAAI
+Conference on Artificial Intelligence, pp. 2901--2907 (2015)
+
+\bibitem{ref_focal}
+Lin, T.-Y., Goyal, P., Girshick, R., He, K., Doll\'ar, P.: Focal loss for
+dense object detection. In: IEEE ICCV, pp. 2980--2988 (2017).
+\doi{10.1109/ICCV.2017.324}
+
+\bibitem{ref_ensemble}
+Dietterich, T.G.: Ensemble methods in machine learning. In: Multiple
+Classifier Systems (MCS), LNCS, vol.~1857, pp. 1--15. Springer, Heidelberg
+(2000). \doi{10.1007/3-540-45014-9_1}
+
+\bibitem{ref_kundu}
+Kundu, R., Das, R., Geem, Z.W., Han, G.-T., Sarkar, R.: Pneumonia detection
+in chest X-ray images using an ensemble of deep learning models. PLOS ONE
+\textbf{16}(9), e0256630 (2021). \doi{10.1371/journal.pone.0256630}
+
+\bibitem{ref_rahman}
+Rahman, T., Chowdhury, M.E.H., Khandakar, A., Islam, K.R., Islam, K.F.,
+Mahbub, Z.B., Kadir, M.A., Kashem, S.: Transfer learning with deep
+convolutional neural network (CNN) for pneumonia detection using chest
+X-ray. Applied Sciences \textbf{10}(9), 3233 (2020).
+\doi{10.3390/app10093233}
 
 \bibitem{ref_imagenet}
 Deng, J., Dong, W., Socher, R., Li, L.-J., Li, K., Fei-Fei, L.: ImageNet: A
@@ -772,6 +818,7 @@ backbones.}
 \label{fig:app_curves}
 \end{figure}
 
+\FloatBarrier
 \subsection{Three-Class Confusion Matrices (per seed)}
 
 Figure~\ref{fig:app_cm} shows the per-seed confusion matrices for
@@ -797,6 +844,7 @@ artefact of a single run.
 \label{fig:app_cm}
 \end{figure}
 
+\FloatBarrier
 \subsection{Additional Grad-CAM Examples}
 
 Figure~\ref{fig:app_gradcam} provides further three-class Grad-CAM examples,
