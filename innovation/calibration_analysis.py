@@ -26,7 +26,11 @@ from pneumonia_classifier.utils import save_json
 
 METRICS_DIR = Path("results/metrics")
 FIGURES_DIR = Path("results/figures")
-ALL_MODELS = ["custom_cnn", "resnet18", "densenet121", "ensemble_resnet18_densenet121"]
+ALL_MODELS = [
+    "custom_cnn", "resnet18", "densenet121", "ensemble_resnet18_densenet121",
+    "resnet18_3class", "densenet121_3class", "ensemble_resnet18_densenet121_3class",
+]
+ENSEMBLE_MODELS = {"ensemble_resnet18_densenet121", "ensemble_resnet18_densenet121_3class"}
 SEEDS = [0, 1, 2]
 
 # Calibration helpers
@@ -116,14 +120,22 @@ def plot_reliability_diagram(models_data: dict[str, tuple[np.ndarray, np.ndarray
 # Per-model analysis
 
 def _load_probs(model: str, seed: int | None) -> tuple[np.ndarray, np.ndarray] | None:
-    """Load y_true / y_prob for a model+seed combination."""
-    if seed is None:
-        # Ensemble: single file, no seed suffix
-        path = METRICS_DIR / f"{model}_probs.json"
-    else:
-        path = METRICS_DIR / f"{model}_seed{seed}_probs.json"
+    """Load y_true / y_prob for a model+seed combination.
 
-    if not path.exists():
+    Tries both binary and three-class filename patterns, using whichever exists.
+    """
+    if seed is None:
+        candidates = [
+            METRICS_DIR / f"{model}_probs.json",
+        ]
+    else:
+        candidates = [
+            METRICS_DIR / f"{model}_seed{seed}_probs.json",
+            METRICS_DIR / f"{model}_3class_seed{seed}_probs.json",
+        ]
+
+    path = next((p for p in candidates if p.exists()), None)
+    if path is None:
         return None
 
     with path.open() as f:
@@ -131,6 +143,11 @@ def _load_probs(model: str, seed: int | None) -> tuple[np.ndarray, np.ndarray] |
 
     y_true = np.asarray(data["y_true"], dtype=int)
     y_prob = np.asarray(data["y_prob"], dtype=float)
+
+    # For multi-class, use the max probability as the confidence score for calibration
+    if y_prob.ndim == 2:
+        y_prob = y_prob.max(axis=1)
+
     return y_true, y_prob
 
 
@@ -197,8 +214,7 @@ def main() -> None:
     diagram_inputs: dict[str, tuple] = {}
 
     for model in args.models:
-        is_ensemble = model == "ensemble_resnet18_densenet121"
-        seeds = None if is_ensemble else args.seeds
+        seeds = None if model in ENSEMBLE_MODELS else args.seeds
         print(f"Analysing {model} ...")
         summary = analyse_model(model, seeds, args.bins)
         if summary is None:

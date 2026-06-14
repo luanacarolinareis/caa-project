@@ -85,12 +85,21 @@ def run_ensemble(config: dict, device: torch.device) -> dict:
         threshold = config["evaluation"].get("threshold", 0.5)
         metrics = compute_binary_metrics(y_true, avg_probs.tolist(), threshold=threshold)
 
+    suffix = "_3class" if three_class else ""
     metrics.update({
-        "model": "ensemble_resnet18_densenet121",
-        "members": [f"{m}_seed{s}" for m in ENSEMBLE_MODELS for s in SEEDS],
+        "model": f"ensemble_resnet18_densenet121{suffix}",
+        "members": [f"{m}{suffix}_seed{s}" for m in ENSEMBLE_MODELS for s in SEEDS],
         "num_members": len(all_probs),
         "num_test_images": len(y_true),
     })
+
+    # Save raw probabilities for calibration analysis
+    probs_path = (
+        Path(config["outputs"]["metrics_dir"])
+        / f"ensemble_resnet18_densenet121{suffix}_probs.json"
+    )
+    save_json({"y_true": y_true, "y_prob": avg_probs.tolist(), "model": metrics["model"]}, probs_path)
+
     return metrics
 
 
@@ -119,7 +128,10 @@ def main() -> None:
 
     metrics = run_ensemble(config, device)
 
-    output_path = (Path(config["outputs"]["metrics_dir"]) / f"ensemble_resnet18_densenet121{suffix}.json")
+    output_path = (
+        Path(config["outputs"]["metrics_dir"])
+        / f"ensemble_resnet18_densenet121{suffix}.json"
+    )
     save_json(metrics, output_path)
 
     print(f"\nSaved: {output_path}")
