@@ -7,9 +7,9 @@ For each model, loads the raw probability files (*_probs.json) produced by evalu
   - Optimal threshold for maximum F1 (assisted diagnosis scenario)
 
 Usage:
-    python innovation/calibration_analysis.py
-    python innovation/calibration_analysis.py --models resnet18 densenet121
-    python innovation/calibration_analysis.py --seeds 0 1 2 --bins 15
+    python scripts/calibration_analysis.py
+    python scripts/calibration_analysis.py --models resnet18 densenet121
+    python scripts/calibration_analysis.py --seeds 0 1 2 --bins 15
 """
 from __future__ import annotations
 import argparse

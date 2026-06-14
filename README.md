@@ -36,10 +36,9 @@ Project/
   Additional Files/           Reports, presentation, template, and supporting material
   configs/                    Experiment configuration files (default.yaml, three_class.yaml)
   data/                       Dataset placement instructions only
-  innovation/                 Three-class training, evaluation, ensemble, and calibration scripts
   notebooks/                  Dataset checks and final experiment notebook
   results/                    Generated metrics, figures, Grad-CAM outputs, checkpoints
-  scripts/                    Command-line entry points for the binary baseline
+  scripts/                    Command-line entry points for all tasks (binary and three-class)
   src/pneumonia_classifier/   Reusable project code
 ```
 
@@ -158,25 +157,25 @@ The Kermany dataset encodes bacterial and viral subtypes in the filenames (`pers
 ResNet18 and DenseNet121 are trained with seeds 0, 1, and 2:
 
 ```powershell
-python innovation/train_three_class.py --model resnet18 --seed 0
-python innovation/train_three_class.py --model resnet18 --seed 1
-python innovation/train_three_class.py --model resnet18 --seed 2
+python scripts/train_three_class.py --model resnet18 --seed 0
+python scripts/train_three_class.py --model resnet18 --seed 1
+python scripts/train_three_class.py --model resnet18 --seed 2
 
-python innovation/train_three_class.py --model densenet121 --seed 0
-python innovation/train_three_class.py --model densenet121 --seed 1
-python innovation/train_three_class.py --model densenet121 --seed 2
+python scripts/train_three_class.py --model densenet121 --seed 0
+python scripts/train_three_class.py --model densenet121 --seed 1
+python scripts/train_three_class.py --model densenet121 --seed 2
 ```
 
 ### Three-Class Evaluation
 
 ```powershell
-python innovation/evaluate_three_class.py --model resnet18 --checkpoint results/checkpoints/resnet18_3class_seed0.pt --seed 0
-python innovation/evaluate_three_class.py --model resnet18 --checkpoint results/checkpoints/resnet18_3class_seed1.pt --seed 1
-python innovation/evaluate_three_class.py --model resnet18 --checkpoint results/checkpoints/resnet18_3class_seed2.pt --seed 2
+python scripts/evaluate_three_class.py --model resnet18 --checkpoint results/checkpoints/resnet18_3class_seed0.pt --seed 0
+python scripts/evaluate_three_class.py --model resnet18 --checkpoint results/checkpoints/resnet18_3class_seed1.pt --seed 1
+python scripts/evaluate_three_class.py --model resnet18 --checkpoint results/checkpoints/resnet18_3class_seed2.pt --seed 2
 
-python innovation/evaluate_three_class.py --model densenet121 --checkpoint results/checkpoints/densenet121_3class_seed0.pt --seed 0
-python innovation/evaluate_three_class.py --model densenet121 --checkpoint results/checkpoints/densenet121_3class_seed1.pt --seed 1
-python innovation/evaluate_three_class.py --model densenet121 --checkpoint results/checkpoints/densenet121_3class_seed2.pt --seed 2
+python scripts/evaluate_three_class.py --model densenet121 --checkpoint results/checkpoints/densenet121_3class_seed0.pt --seed 0
+python scripts/evaluate_three_class.py --model densenet121 --checkpoint results/checkpoints/densenet121_3class_seed1.pt --seed 1
+python scripts/evaluate_three_class.py --model densenet121 --checkpoint results/checkpoints/densenet121_3class_seed2.pt --seed 2
 ```
 
 Build result tables for the three-class task:
@@ -196,8 +195,8 @@ python scripts/generate_gradcam.py --config configs/three_class.yaml --model den
 Averages the probabilities of all ResNet18 and DenseNet121 checkpoints:
 
 ```powershell
-python innovation/ensemble.py                                    # binary
-python innovation/ensemble.py --config configs/three_class.yaml  # three-class
+python scripts/ensemble.py                                    # binary
+python scripts/ensemble.py --config configs/three_class.yaml  # three-class
 ```
 
 ### Calibration Analysis
@@ -205,7 +204,7 @@ python innovation/ensemble.py --config configs/three_class.yaml  # three-class
 Analyses model calibration (ECE, reliability diagrams) and finds optimal decision thresholds for two clinical scenarios: screening (maximise recall) and assisted diagnosis (maximise F1). Requires the `_probs.json` files produced by the evaluation scripts above.
 
 ```powershell
-python innovation/calibration_analysis.py
+python scripts/calibration_analysis.py
 ```
 
 ---

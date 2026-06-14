@@ -1,11 +1,11 @@
 """Evaluate a trained 3-class checkpoint on the test split.
 
 Usage:
-    python innovation/evaluate_three_class.py \
+    python scripts/evaluate_three_class.py \
         --model densenet121 \
         --checkpoint results/checkpoints/densenet121_3class_seed0.pt
 
-    python innovation/evaluate_three_class.py \
+    python scripts/evaluate_three_class.py \
         --model resnet18 \
         --checkpoint results/checkpoints/resnet18_3class_seed0.pt \
         --seed 0

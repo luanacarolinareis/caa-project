@@ -6,7 +6,7 @@ Produces:
   - Metric comparison bar chart across models
 
 Usage:
-    python innovation/generate_plots_three_class.py
+    python scripts/generate_plots_three_class.py
 """
 from __future__ import annotations
 

@@ -6,8 +6,8 @@ Results are saved alongside individual-model metrics so make_result_tables.py
 can include them in the summary table.
 
 Usage:
-    python innovation/ensemble.py
-    python innovation/ensemble.py --config configs/three_class.yaml
+    python scripts/ensemble.py
+    python scripts/ensemble.py --config configs/three_class.yaml
 """
 from __future__ import annotations
 import argparse

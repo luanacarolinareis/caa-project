@@ -3,8 +3,8 @@
 Normal / Bacterial Pneumonia / Viral Pneumonia.
 
 Usage:
-    python innovation/train_three_class.py --model densenet121 --seed 0
-    python innovation/train_three_class.py --model resnet18 --config configs/three_class.yaml --seed 0
+    python scripts/train_three_class.py --model densenet121 --seed 0
+    python scripts/train_three_class.py --model resnet18 --config configs/three_class.yaml --seed 0
 """
 from __future__ import annotations
 import argparse
