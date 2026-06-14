@@ -249,6 +249,15 @@ Analyses model calibration (ECE, reliability diagrams) and finds optimal decisio
 python scripts/calibration_analysis.py
 ```
 
+### Figures
+
+All result figures (confusion matrices, training curves, and the metric-comparison bar charts) are regenerated from the real per-seed and ensemble metric JSONs, so they always match the metrics tables. Run the evaluation and ensemble steps first, then:
+
+```powershell
+python scripts/generate_plots_binary.py        # binary figures
+python scripts/generate_plots_three_class.py   # three-class figures
+```
+
 ---
 
 ## Outputs

@@ -1,5 +1,5 @@
-% This is samplepaper.tex, a sample chapter demonstrating the
-% LLNCS macro package for Springer Computer Science proceedings;
+% This is FinalProjectReport.tex, using the LLNCS macro package for
+% Springer Computer Science proceedings.
 % Version 2.21 of 2022/01/12
 %
 \documentclass[runningheads]{llncs}
@@ -13,160 +13,812 @@
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
 %
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage[section]{placeins} % keep floats within the section that defines them
+\usepackage{eso-pic}   % absolute placement of the cover-page logos
+%
 % If you use the hyperref package, please uncomment the following two lines
 % to display URLs in blue roman font according to Springer's eBook style:
-%\usepackage{color}
-%\renewcommand\UrlFont{\color{blue}\rmfamily}
-%\urlstyle{rm}
+\usepackage{color}
+\usepackage{hyperref}
+\renewcommand\UrlFont{\color{blue}\rmfamily}
+\urlstyle{rm}
+%
+\graphicspath{{../../results/figures/}{../../results/gradcam/}}
+%
+% Allow a little extra inter-word stretch to avoid overfull lines caused by
+% long hyphenated compounds and \texttt{} tokens, and give hyphenation hints.
+\emergencystretch=3em
+\raggedbottom
+% Relax the float-placement parameters so figures/tables sit closer to the
+% text that references them (more float area per page, less forced text).
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+% Silence purely cosmetic "underfull hbox" reports (loose inter-word spacing
+% that is invisible in the PDF); genuine overfull boxes are still reported.
+\hbadness=10000
+\hfuzz=0.5pt
+\hyphenation{probabil-ity-averaging depend-ency-pinned trans-fer-learning
+re-sam-pling aeti-ology DenseNet ResNet ImageNet}
 %
 \begin{document}
 %
-\title{Contribution Title}
+\title{Deep Learning for Pneumonia Classification from
+Pediatric Chest X-Rays: From a Binary Baseline to a
+Bacterial--Viral Three-Class Extension}
 %
-%\titlerunning{Abbreviated paper title}
-% If the paper title is too long for the running head, you can set
-% an abbreviated paper title here
+\titlerunning{Deep Learning for Pediatric Pneumonia Classification}
 %
-\author{First Author\inst{1}\orcidID{0000-1111-2222-3333} \and
-Second Author\inst{2,3}\orcidID{1111-2222-3333-4444} \and
-Third Author\inst{3}\orcidID{2222--3333-4444-5555}}
+\author{Carolina Reis\inst{1} \and
+Jakub B\l{}aszczyk\inst{1,2}}
 %
-\authorrunning{F. Author et al.}
-% First names are abbreviated in the running head.
-% If there are more than two authors, 'et al.' is used.
+\authorrunning{C. Reis and J. B\l{}aszczyk}
 %
-\institute{Princeton University, Princeton NJ 08544, USA \and
-Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
-\email{lncs@springer.com}\\
-\url{http://www.springer.com/gp/computer-science/lncs} \and
-ABC Institute, Rupert-Karls-University Heidelberg, Heidelberg, Germany\\
-\email{\{abc,lncs\}@uni-heidelberg.de}}
+\institute{University of Aveiro, Aveiro, Portugal\\
+\email{\{luanacarolina,jakub.blaszczyk\}@ua.pt} \and
+Lodz University of Technology, \L{}\'od\'z, Poland}
 %
 \maketitle              % typeset the header of the contribution
 %
+% Cover-page logos: UA top-left, DETI top-right (first page only).
+\AddToShipoutPictureBG*{%
+  \AtPageUpperLeft{\raisebox{-1.6cm}{\hspace{1.6cm}%
+    \includegraphics[height=0.9cm]{logo-ua.png}}}%
+  \AtPageUpperLeft{\hspace{\paperwidth}\raisebox{-1.6cm}{%
+    \makebox[0pt][r]{\includegraphics[height=0.9cm]{logo-deti.png}\hspace{1.6cm}}}}%
+}
+%
 \begin{abstract}
-The abstract should briefly summarize the contents of the paper in
-150--250 words.
+Pneumonia is a leading cause of pediatric mortality worldwide, and chest
+X-ray (CXR) interpretation remains a bottleneck in resource-limited
+settings. We study deep-learning models for pneumonia classification on
+the public Kermany pediatric CXR dataset. As a baseline we address the
+standard binary task (NORMAL vs.\ PNEUMONIA), comparing a custom
+convolutional neural network (CNN) against ImageNet-pretrained ResNet18
+and DenseNet121 transfer-learning models. Following feedback to increase
+the clinical relevance of the task, we extend the problem to a
+three-class formulation that separates \emph{bacterial} from
+\emph{viral} pneumonia---a distinction that drives different treatment
+decisions---using labels derived automatically from the dataset
+filenames. We further investigate a probability-averaging ensemble, model
+calibration (Expected Calibration Error and reliability diagrams),
+decision-threshold optimisation for two clinical scenarios, and Grad-CAM
+visual explanations that verify the models attend to clinically plausible
+lung regions. On the binary task the ensemble reaches an accuracy of
+$0.856$, an F1 of $0.896$, and an AUROC of $0.963$ with $99.7\%$ recall
+on pneumonia (only $1$ of $390$ cases missed). On the harder three-class
+task the ensemble achieves an accuracy of $0.817$ and a macro-F1 of
+$0.804$, with per-class F1 scores of $0.77$ (NORMAL), $0.91$ (BACTERIA),
+and $0.72$ (VIRUS), confirming that viral pneumonia is the most difficult
+class to recognise. All experiments are reproducible across three seeds and
+are released as an open, documented code repository.
 
-\keywords{First keyword  \and Second keyword \and Another keyword.}
+\keywords{Pneumonia classification \and Chest X-ray \and Transfer
+learning \and Convolutional neural networks \and Grad-CAM \and Model
+calibration.}
 \end{abstract}
 %
 %
 %
-\section{First Section}
-\subsection{A Subsection Sample}
-Please note that the first paragraph of a section or subsection is
-not indented. The first paragraph that follows a table, figure,
-equation etc. does not need an indent, either.
+\section{Introduction}
 
-Subsequent paragraphs, however, are indented.
+Pneumonia is an acute respiratory infection of the lungs and one of the
+leading causes of death in children under five years of age worldwide.
+Chest X-ray (CXR) imaging is the most widely used and accessible modality
+for diagnosing pneumonia, but its interpretation requires trained
+radiologists, who are scarce in many low-resource settings. Computer-aided
+diagnosis systems based on deep learning have therefore attracted strong
+interest as a way to support, triage, and accelerate radiological
+workflows.
 
-\subsubsection{Sample Heading (Third Level)} Only two levels of
-headings should be numbered. Lower level headings remain unnumbered;
-they are formatted as run-in headings.
+In this work we develop and evaluate deep-learning models for pneumonia
+classification from pediatric CXR images, using the public
+Kermany ``Chest X-Ray Images (Pneumonia)'' dataset~\cite{ref_kermany}.
+The project is organised around two tasks. The first is the standard
+\emph{binary} task of distinguishing NORMAL from PNEUMONIA, which we use
+as a baseline to compare a custom CNN against two transfer-learning
+backbones. The second, and our main contribution, is a \emph{three-class}
+extension that further separates pneumonia into its \emph{bacterial} and
+\emph{viral} subtypes. This distinction is clinically meaningful: bacterial
+pneumonia is typically treated with antibiotics, whereas viral pneumonia is
+not, so a model that can hint at the likely aetiology is potentially more
+useful in practice than one that only flags the presence of disease.
 
-\paragraph{Sample Heading (Fourth Level)}
-The contribution should contain no more than four levels of
-headings. Table~\ref{tab1} gives a summary of all heading levels.
+Our contributions are the following:
+\begin{enumerate}
+  \item A clean, reproducible comparison of a custom CNN, ResNet18, and
+  DenseNet121 on binary pediatric pneumonia classification, reported as
+  mean\,$\pm$\,standard deviation across three random seeds.
+  \item A three-class (NORMAL / BACTERIA / VIRUS) extension whose labels are
+  derived automatically from the dataset filenames, requiring no manual
+  annotation, together with a per-class analysis of where the models
+  succeed and fail.
+  \item A study of additional, clinically motivated components: a
+  probability-averaging ensemble, a calibration analysis (Expected
+  Calibration Error and reliability diagrams), decision-threshold
+  optimisation for two clinical scenarios, and Grad-CAM visual
+  explanations.
+  \item A documented, dependency-pinned code repository with
+  command-line entry points that reproduce every result and figure in
+  this report.
+\end{enumerate}
 
-\begin{table}
-\caption{Table captions should be placed above the
-tables.}\label{tab1}
-\begin{tabular}{|l|l|l|}
-\hline
-Heading level &  Example & Font size and style\\
-\hline
-Title (centered) &  {\Large\bfseries Lecture Notes} & 14 point, bold\\
-1st-level heading &  {\large\bfseries 1 Introduction} & 12 point, bold\\
-2nd-level heading & {\bfseries 2.1 Printing Area} & 10 point, bold\\
-3rd-level heading & {\bfseries Run-in Heading in Bold.} Text follows & 10 point, bold\\
-4th-level heading & {\itshape Lowest Level Heading.} Text follows & 10 point, italic\\
-\hline
+This repository is intended for educational experimentation only and is
+not a clinical decision tool.
+
+\section{Related Work}
+
+The release of large public CXR datasets greatly accelerated research on
+pneumonia detection. Wang et al.~\cite{ref_chestxray14} introduced
+ChestX-ray14, and Rajpurkar et al.~\cite{ref_chexnet} proposed CheXNet, a
+121-layer DenseNet that matched radiologist performance on pneumonia
+detection, establishing DenseNet as a strong backbone for CXR analysis.
+Kermany et al.~\cite{ref_kermany} released the pediatric CXR dataset used
+in this work and demonstrated the effectiveness of transfer learning from
+ImageNet-pretrained networks for medical image classification, a strategy
+that remains a standard and competitive baseline.
+
+Transfer learning is particularly attractive in the medical domain because
+labelled data is limited: features learned on ImageNet transfer well to
+CXRs, and only the classifier head (and optionally the deeper layers) needs
+to be retrained~\cite{ref_kermany,ref_chexnet}. To make such models
+trustworthy, two complementary tools are widely used. Grad-CAM~\cite{ref_gradcam}
+produces class-discriminative heatmaps that reveal which image regions a CNN
+relies on, helping to detect spurious correlations. Calibration analysis,
+summarised by the Expected Calibration Error and reliability
+diagrams~\cite{ref_calibration}, quantifies whether predicted probabilities
+reflect true correctness likelihood---an important property when a model's
+output is used to set a decision threshold in a screening or
+assisted-diagnosis pipeline. Finally, ensembling independently trained
+models is a simple and reliable way to reduce variance and improve
+robustness~\cite{ref_resnet,ref_densenet}.
+
+Most prior work on the Kermany dataset addresses only the binary task. The
+bacterial-versus-viral distinction is encoded in the filenames but is
+rarely exploited. Our three-class extension targets exactly this gap and
+analyses it under the same reproducible protocol as the binary baseline.
+
+\section{Dataset}
+
+We use the Kermany pediatric ``Chest X-Ray Images
+(Pneumonia)'' dataset~\cite{ref_kermany}, which contains
+anterior--posterior CXRs of pediatric patients (ages 1--5) collected at the
+Guangzhou Women and Children's Medical Center. The dataset ships with a
+fixed train/validation/test split and two top-level classes, NORMAL and
+PNEUMONIA. We use the provided split as-is.
+
+For the three-class task we exploit the fact that every pneumonia image
+encodes its aetiology in the filename
+(e.g.\ \texttt{person100\_bacteria\_4.jpeg} vs.\
+\texttt{person154\_virus\_2.jpeg}). A small parser maps each file to one of
+NORMAL, BACTERIA, or VIRUS, so the three-class labels are obtained
+automatically and require no manual annotation. Table~\ref{tab:dataset}
+summarises the resulting class counts and Fig.~\ref{fig:dist} visualises
+the binary split.
+
+\begin{table}[!ht]
+\caption{Image counts for the binary and three-class formulations. The
+provided validation split contains only 16 images, so for the three-class
+task a small balanced validation set (8 images per class) is re-sampled
+deterministically from the training data when classes are missing.}
+\label{tab:dataset}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Split & NORMAL & BACTERIA & VIRUS & Total \\
+\midrule
+Train & 1{,}341 & 2{,}530 & 1{,}345 & 5{,}216 \\
+Test  & 234     & 242     & 148     & 624 \\
+\bottomrule
 \end{tabular}
 \end{table}
 
-
-\noindent Displayed equations are centered and set on a separate
-line.
-\begin{equation}
-x + y = z
-\end{equation}
-Please try to avoid rasterized images for line-art diagrams and
-schemas. Whenever possible, use vector graphics instead (see
-Fig.~\ref{fig1}).
-
-\begin{figure}
-\caption{A figure caption is always placed below the illustration.
-Please note that short captions are centered, while long ones are
-justified by the macro package automatically.} \label{fig1}
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{class_distribution.png}
+\caption{Binary class distribution by split. \emph{Left:} the training and
+test sets are dominated by PNEUMONIA ($\approx2.9\!:\!1$ in training).
+\emph{Right:} the official validation split contains only 16 images,
+motivating the re-sampling strategy used for the three-class task.}
+\label{fig:dist}
 \end{figure}
 
-\begin{theorem}
-This is a sample theorem. The run-in heading is set in bold, while
-the following text appears in italics. Definitions, lemmas,
-propositions, and corollaries are styled the same way.
-\end{theorem}
-%
-% the environments 'definition', 'lemma', 'proposition', 'corollary',
-% 'remark', and 'example' are defined in the LLNCS documentclass as well.
-%
-\begin{proof}
-Proofs, examples, and remarks have the initial word in italics,
-while the following text appears in normal font.
-\end{proof}
-For citations of references, we prefer the use of square brackets
-and consecutive numbers. Citations using labels or the author/year
-convention are also acceptable. The following bibliography provides
-a sample reference list with entries for journal
-articles~\cite{ref_article1}, an LNCS chapter~\cite{ref_lncs1}, a
-book~\cite{ref_book1}, proceedings without editors~\cite{ref_proc1},
-and a homepage~\cite{ref_url1}. Multiple citations are grouped
-\cite{ref_article1,ref_lncs1,ref_book1},
-\cite{ref_article1,ref_book1,ref_proc1,ref_url1}.
+Two characteristics of the dataset shape our methodology. First, the
+training set is \emph{class-imbalanced}: PNEUMONIA images outnumber NORMAL
+images roughly $2.9\!:\!1$, and within pneumonia, bacterial cases dominate
+viral cases. Second, the official validation split is tiny (16 images),
+which makes model selection noisy; for the three-class task we therefore
+re-sample a small balanced validation set from the training data with a
+fixed seed whenever a class is missing. All reported metrics are computed
+on the untouched official test set of 624 images.
 
-\begin{credits}
-\subsubsection{\ackname} A bold run-in heading in small font size at the end of the paper is
-used for general acknowledgments, for example: This study was funded
-by X (grant number Y).
+\section{Methodology}
 
-\subsubsection{\discintname}
-It is now necessary to declare any competing interests or to specifically
-state that the authors have no competing interests. Please place the
-statement with a bold run-in heading in small font size beneath the
-(optional) acknowledgments\footnote{If EquinOCS, our proceedings submission
-system, is used, then the disclaimer can be provided directly in the system.},
-for example: The authors have no competing interests to declare that are
-relevant to the content of this article. Or: Author A has received research
-grants from Company W. Author B has received a speaker honorarium from
-Company X and owns stock in Company Y. Author C is a member of committee Z.
-\end{credits}
+\subsection{Preprocessing and Augmentation}
+
+All images are resized to $224\times224$ pixels. Because the pretrained
+backbones expect three-channel RGB input, the grayscale X-rays are
+converted to three channels, and ImageNet normalisation
+(mean $[0.485, 0.456, 0.406]$, std $[0.229, 0.224, 0.225]$) is applied.
+During training we use light data augmentation appropriate for
+radiographs---random horizontal flips and small rotations
+($\pm10^{\circ}$)---which preserves diagnostic content while improving
+generalisation. Validation and test images are not augmented.
+
+\subsection{Models}
+
+We compare three architectures.
+
+\textbf{Custom CNN (baseline).} A compact three-block convolutional network.
+Each block is a $3\times3$ convolution followed by batch normalisation, a
+ReLU activation, and $2\times2$ max-pooling, with the channel width growing
+$32\!\to\!64\!\to\!128$. A global average-pooling layer, dropout
+($p=0.3$), and a single linear layer produce the output. This model is
+trained from scratch and serves as a lower-bound reference.
+
+\textbf{ResNet18}~\cite{ref_resnet} and \textbf{DenseNet121}~\cite{ref_densenet}.
+Two standard ImageNet-pretrained backbones. We replace the final
+classification layer with a new linear head sized for the task (one output
+for binary, three for the three-class task) and apply transfer learning.
+
+\subsection{Training Protocol}
+
+The custom CNN is trained from scratch for up to 20 epochs. The
+transfer-learning models follow a two-phase schedule. In
+\emph{phase 1} the backbone is frozen and only the new head is trained for
+5 epochs, which adapts the classifier to the new label space without
+destroying the pretrained features. In \emph{phase 2} the entire network
+is unfrozen and fine-tuned for up to 30 additional epochs.
+
+All models are optimised with Adam (learning rate $10^{-4}$) and a batch
+size of 32. The binary task uses binary cross-entropy with logits; the
+three-class task uses categorical cross-entropy. We use a
+\texttt{ReduceLROnPlateau} scheduler (factor $0.5$, patience 3) on the
+validation loss and early stopping (patience 5). The checkpoint with the
+lowest validation loss is retained. To assess robustness, every model is
+trained with three random seeds ($0$, $1$, $2$), and results are reported
+as mean\,$\pm$\,standard deviation.
+
+\subsection{Ensemble}
+
+We additionally build a simple ensemble that averages the predicted
+probabilities of all six transfer-learning checkpoints (ResNet18 and
+DenseNet121, each with three seeds). For the binary task this averages the
+sigmoid outputs; for the three-class task it averages the softmax vectors.
+The averaged probabilities are then thresholded (binary) or
+\texttt{argmax}-ed (three-class) to obtain the final prediction.
+
+\subsection{Calibration and Threshold Optimisation}
+
+Beyond accuracy, we assess whether the predicted probabilities are
+trustworthy. We compute the Expected Calibration Error
+(ECE)~\cite{ref_calibration} with ten equal-width confidence bins and plot
+reliability diagrams (mean accuracy vs.\ mean confidence per bin). For the
+binary task we also derive task-specific decision thresholds for two
+clinical scenarios: a \emph{screening} scenario, in which we pick the
+highest threshold that still guarantees at least $99\%$ recall on pneumonia
+(prioritising sensitivity, since missing a sick child is costly), and an
+\emph{assisted-diagnosis} scenario, in which we pick the threshold that
+maximises F1 (balancing precision and recall).
+
+\subsection{Visual Explanations}
+
+We use Grad-CAM~\cite{ref_gradcam} to produce class-discriminative
+heatmaps from the last convolutional layer of each transfer-learning
+model. These overlays let us qualitatively verify that correct predictions
+are driven by lung-field opacities rather than by irrelevant image
+artefacts, and they help to interpret failure cases.
+
+\subsection{Evaluation Metrics}
+
+For the binary task we report accuracy, precision, recall (sensitivity),
+specificity, F1, and AUROC, together with the inference time per image.
+For the three-class task we report accuracy, macro-averaged precision,
+recall, and F1, per-class F1, and one-vs-rest macro AUROC. We emphasise
+recall on the disease classes because, in a clinical context, false
+negatives are more costly than false positives.
+
+\section{Results}
+
+\subsection{Training Dynamics}
+
+Figure~\ref{fig:curves} shows the binary DenseNet121 training curves for
+all three seeds. The two-phase schedule is clearly visible: training loss
+falls rapidly and smoothly, while validation loss is noisier and plateaus
+early, after which early stopping halts training (between epochs 11 and 23
+depending on the seed). The validation F1 quickly saturates near $1.0$ on
+the tiny 16-image validation split, which confirms that this split is too
+small for reliable model selection and motivates reporting all final
+numbers on the full 624-image test set instead. The custom CNN, by
+contrast, exhibited markedly less stable validation behaviour across seeds,
+foreshadowing the high variance reported below.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{densenet121_training_curves.png}
+\caption{Binary DenseNet121 training curves across the three seeds.
+\emph{Left:} train (dashed) and validation (solid) loss; the train loss
+converges smoothly while the validation loss is noisy on the small
+validation set. \emph{Right:} validation F1 saturates near $1.0$, showing
+the validation split is too small to discriminate between checkpoints.}
+\label{fig:curves}
+\end{figure}
+
+\FloatBarrier
+\subsection{Binary Classification}
+
+Table~\ref{tab:binary} reports the binary results across three seeds, and
+Fig.~\ref{fig:metricbin} visualises the comparison. Both transfer-learning
+models clearly outperform the custom CNN baseline on every aggregate
+metric. DenseNet121 is the strongest single model (accuracy $0.841$, F1
+$0.887$, AUROC $0.966$), narrowly ahead of ResNet18. The custom CNN reaches
+a competitive F1 but is far less stable: its specificity varies enormously
+across seeds ($0.494\pm0.359$), showing that a from-scratch model on this
+imbalanced dataset is highly sensitive to initialisation.
+
+\begin{table}[!ht]
+\caption{Binary classification (NORMAL vs.\ PNEUMONIA) on the test set,
+mean\,$\pm$\,std over seeds $\{0,1,2\}$. The ensemble averages the six
+transfer-learning checkpoints. Best value per column in \textbf{bold}.}
+\label{tab:binary}
+\centering
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccccc}
+\toprule
+Model & Acc. & Prec. & Recall & Spec. & F1 & AUROC \\
+\midrule
+Custom CNN  & 0.756 & 0.768 & 0.914 & 0.494 & 0.828 & 0.886 \\
+ResNet18    & 0.830 & 0.791 & 0.991 & 0.561 & 0.879 & 0.949 \\
+DenseNet121 & 0.841 & 0.799 & \textbf{0.997} & \textbf{0.581} & 0.887 & \textbf{0.966} \\
+\textbf{Ensemble} & \textbf{0.856} & \textbf{0.814} & \textbf{0.997} & 0.620 & \textbf{0.896} & 0.963 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!ht]
+\centering
+\begin{subfigure}{0.62\textwidth}
+\includegraphics[width=\textwidth]{metric_comparison_binary.png}
+\caption{Per-metric comparison}
+\label{fig:metricbin}
+\end{subfigure}\hfill
+\begin{subfigure}{0.36\textwidth}
+\includegraphics[width=\textwidth]{ensemble_binary_confusion_matrix.png}
+\caption{Ensemble confusion matrix}
+\label{fig:cmbin}
+\end{subfigure}
+\caption{Binary results. (a) All models share the same profile: very high
+recall but comparatively low specificity (red bars). (b) The ensemble
+misses only $1$ of $390$ pneumonia cases (FN), at the cost of $89$ false
+positives on NORMAL.}
+\label{fig:binary}
+\end{figure}
+
+The ensemble gives the best overall trade-off: accuracy $0.856$, F1
+$0.896$, and a recall of $0.997$, meaning it misses only $1$ of the $390$
+pneumonia cases in the test set (confusion matrix in Fig.~\ref{fig:cmbin}:
+TN$=145$, FP$=89$, FN$=1$, TP$=389$). The recurring weakness across all
+models is specificity: the models are eager to predict pneumonia and
+consequently mislabel a substantial fraction of normal images. This
+behaviour is the expected and arguably desirable bias for a screening tool,
+where a missed pneumonia (false negative) is more dangerous than a false
+alarm, but it does indicate room for improvement on the NORMAL class.
+
+\FloatBarrier
+\subsection{Three-Class Classification}
+
+Table~\ref{tab:threeclass} reports the three-class results and
+Fig.~\ref{fig:metric3class} visualises them. As expected, separating
+bacterial from viral pneumonia is substantially harder than the binary
+task. DenseNet121 again outperforms ResNet18 (accuracy $0.814$ vs.\
+$0.769$; macro-F1 $0.801$ vs.\ $0.755$), and the ensemble gives a further
+small improvement, reaching an accuracy of $0.817$, a macro-F1 of $0.804$,
+and a one-vs-rest AUROC of $0.961$.
+
+\begin{table}[!ht]
+\caption{Three-class classification (NORMAL / BACTERIA / VIRUS) on the
+test set, mean\,$\pm$\,std over seeds $\{0,1,2\}$ (single models) or
+deterministic for the ensemble. Macro-averaged metrics. Best in
+\textbf{bold}.}
+\label{tab:threeclass}
+\centering
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+Model & Acc. & Prec.$_\text{M}$ & Recall$_\text{M}$ & F1$_\text{M}$ & AUROC \\
+\midrule
+ResNet18    & $0.769\pm0.005$ & $0.800\pm0.011$ & $0.776\pm0.008$ & $0.755\pm0.002$ & $0.933\pm0.016$ \\
+DenseNet121 & $0.814\pm0.029$ & $0.823\pm0.023$ & $0.817\pm0.030$ & $0.801\pm0.032$ & $0.956\pm0.006$ \\
+\textbf{Ensemble} & \textbf{0.817} & \textbf{0.826} & \textbf{0.820} & \textbf{0.804} & \textbf{0.961} \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{figure}[!ht]
+\centering
+\begin{subfigure}{0.52\textwidth}
+\includegraphics[width=\textwidth]{metric_comparison_3class.png}
+\caption{Per-metric comparison}
+\label{fig:metric3class}
+\end{subfigure}\hfill
+\begin{subfigure}{0.46\textwidth}
+\includegraphics[width=\textwidth]{ensemble_resnet18_densenet121_3class_confusion_matrix.png}
+\caption{Ensemble confusion matrix}
+\label{fig:cm3class}
+\end{subfigure}
+\caption{Three-class results. (a) DenseNet121 and the ensemble dominate
+ResNet18 on every macro-averaged metric. (b) The dominant error is $70$
+NORMAL images predicted as VIRUS; BACTERIA is recognised almost perfectly.}
+\label{fig:threeclass}
+\end{figure}
+
+\FloatBarrier
+\subsection{Error Analysis}
+
+The per-class breakdown of the ensemble is the most informative result.
+Table~\ref{tab:perclass} reports per-class precision, recall, and F1, and
+Fig.~\ref{fig:cm3class} shows the confusion matrix. Three observations
+stand out.
+
+\begin{table}[!ht]
+\caption{Per-class metrics of the three-class ensemble on the test set.}
+\label{tab:perclass}
+\centering
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{lcccc}
+\toprule
+Class & Precision & Recall & F1 & Support \\
+\midrule
+NORMAL   & 0.987 & 0.637 & 0.774 & 234 \\
+BACTERIA & 0.864 & 0.971 & 0.914 & 242 \\
+VIRUS    & 0.627 & 0.851 & 0.722 & 148 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+First, \textbf{bacterial pneumonia is recognised very reliably}
+(F1 $0.914$, recall $0.971$): it is the majority class and the most
+visually distinctive, producing dense, lobar consolidation. Second,
+\textbf{viral pneumonia is the hardest class} (F1 $0.722$): its diffuse,
+interstitial pattern is easily confused with both normal lungs and early
+bacterial infiltrates, which is reflected in its low precision ($0.627$).
+Third, and most striking, \textbf{the dominant error mode is the
+NORMAL$\rightarrow$VIRUS confusion}: $70$ of the $234$ NORMAL images are
+predicted as VIRUS, which is precisely why NORMAL recall ($0.637$) is the
+lowest of the three classes even though NORMAL precision is the highest
+($0.987$). In other words, the model almost never calls a sick lung normal
+(only $2$ BACTERIA and $0$ VIRUS images are misread as NORMAL), but it
+sometimes reads a faint normal lung as viral pneumonia---a conservative,
+screening-friendly direction of error. This mirrors the known clinical
+difficulty of distinguishing subtle viral infiltrates from normal vascular
+markings.
+
+\FloatBarrier
+\subsection{Inference Cost}
+
+All models are lightweight at inference. On our hardware the per-image
+inference time ranges from roughly $12.6$\,ms (ResNet18, three-class) to
+$15.1$\,ms (DenseNet121, three-class), i.e.\ all models run at
+$60$--$80$ images per second on a single GPU. The custom CNN is not
+meaningfully faster than the transfer-learning models, so its lower
+accuracy is not compensated by any speed advantage---another reason to
+prefer the pretrained backbones.
+
+\FloatBarrier
+\subsection{Calibration and Decision Thresholds}
+
+Table~\ref{tab:calibration} reports the calibration analysis. The
+from-scratch custom CNN is, perhaps surprisingly, the best-calibrated
+binary model (ECE $0.108$), whereas the transfer-learning models are
+overconfident (ECE $0.153$--$0.160$): they tend to push probabilities
+towards the extremes. The three-class models are less well calibrated
+still (ECE $0.245$--$0.276$), reflecting the greater difficulty of the
+task. Figure~\ref{fig:reliability} shows the corresponding reliability
+diagrams; the transfer-learning models concentrate their predictions in
+the high-confidence bins, far from the diagonal.
+
+\begin{table}[!ht]
+\caption{Expected Calibration Error (ECE, 10 bins, lower is better) and
+optimised binary decision thresholds. ``Screening'' is the highest
+threshold maintaining $\geq99\%$ recall; ``F1'' maximises F1. Thresholds
+are only defined for the binary task.}
+\label{tab:calibration}
+\centering
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{lccc}
+\toprule
+Model & ECE & Thr.\ (screening) & Thr.\ (F1) \\
+\midrule
+Custom CNN              & $0.108\pm0.051$ & 0.245 & 0.596 \\
+ResNet18                & $0.160\pm0.016$ & 0.593 & 0.981 \\
+DenseNet121             & $0.153\pm0.015$ & 0.860 & 0.995 \\
+Ensemble (binary)       & $0.156$         & 0.751 & 0.986 \\
+ResNet18 (3-class)      & $0.266\pm0.086$ & --    & --    \\
+DenseNet121 (3-class)   & $0.245\pm0.027$ & --    & --    \\
+Ensemble (3-class)      & $0.276$         & --    & --    \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The threshold analysis quantifies an important operational point. Because
+the transfer-learning models are confident, the default $0.5$ threshold is
+not optimal: maximising F1 requires very high thresholds (e.g.\ $0.995$ for
+DenseNet121), whereas a screening deployment that demands $\geq99\%$ recall
+can afford a much lower threshold. Exposing these two operating points
+makes the same trained model usable in both a high-sensitivity triage mode
+and a balanced assisted-diagnosis mode, without retraining.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{reliability_diagrams.png}
+\caption{Reliability diagrams. The dashed diagonal is perfect calibration;
+points above the diagonal indicate under-confidence and below it
+over-confidence. Transfer-learning models concentrate their predictions in
+the high-confidence bins.}
+\label{fig:reliability}
+\end{figure}
+
+\FloatBarrier
+\subsection{Grad-CAM Visual Explanations}
+
+Figure~\ref{fig:gradcambin} shows binary Grad-CAM overlays for DenseNet121
+across the four outcome types. For true positives and true negatives the
+activation is anatomically sensible---concentrated on the consolidated
+lung field for pneumonia and diffuse/peripheral for normal lungs---whereas
+the false positive and false negative reveal where the model is led astray.
+Figure~\ref{fig:gradcam3} extends this to the three-class model: correct
+bacterial and viral predictions focus on the affected lung fields, while
+the NORMAL$\rightarrow$VIRUS failure shows diffuse activation over
+otherwise normal lungs, visually corroborating the dominant error mode
+identified in Table~\ref{tab:perclass}.
+
+\begin{figure}[!ht]
+\centering
+\begin{subfigure}{0.24\textwidth}
+\includegraphics[width=\textwidth]{densenet121_tp_pneumonia_person100_bacteria_4.png}
+\caption{TP (pneumonia)}
+\end{subfigure}\hfill
+\begin{subfigure}{0.24\textwidth}
+\includegraphics[width=\textwidth]{densenet121_tn_normal_IM-0001-0001.png}
+\caption{TN (normal)}
+\end{subfigure}\hfill
+\begin{subfigure}{0.24\textwidth}
+\includegraphics[width=\textwidth]{densenet121_fp_IM-0019-0001.png}
+\caption{FP}
+\end{subfigure}\hfill
+\begin{subfigure}{0.24\textwidth}
+\includegraphics[width=\textwidth]{densenet121_fn_person154_bacteria_7.png}
+\caption{FN}
+\end{subfigure}
+\caption{Binary Grad-CAM overlays (DenseNet121) for the four outcome types.
+Correct predictions (TP, TN) attend to plausible lung regions; the FP and
+FN illustrate the failure modes behind the imperfect specificity.}
+\label{fig:gradcambin}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_correct_BACTERIA_person100_bacteria_4.png}
+\caption{Correct: BACTERIA}
+\end{subfigure}\hfill
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_correct_VIRUS_person10_virus_35.png}
+\caption{Correct: VIRUS}
+\end{subfigure}\hfill
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_wrong_NORMAL_as_VIRUS_IM-0015-0001.png}
+\caption{Error: NORMAL as VIRUS}
+\end{subfigure}
+\caption{Three-class Grad-CAM overlays (DenseNet121). Correct predictions
+focus on the affected lung fields; the failure case shows diffuse
+activation over normal lungs.}
+\label{fig:gradcam3}
+\end{figure}
+
+\section{Discussion}
+
+Three findings stand out. First, transfer learning is decisively better
+than training from scratch on this dataset: ResNet18 and DenseNet121
+outperform the custom CNN on every metric and, crucially, are far more
+stable across seeds. Given limited medical data, ImageNet-pretrained
+features are a strong and cheap prior. Second, the three-class extension is
+both feasible and informative. Although accuracy drops relative to the
+binary task (as expected), the model still separates bacterial from viral
+pneumonia well above chance, and the per-class analysis localises the
+difficulty precisely at the NORMAL/VIRUS boundary, which mirrors the known
+clinical difficulty of distinguishing viral infiltrates from normal
+variation. Third, the auxiliary analyses---ensembling, calibration, and
+threshold optimisation---turn a raw classifier into something closer to a
+deployable component, by reducing variance, exposing over-confidence, and
+providing explicit operating points for screening versus assisted
+diagnosis.
+
+\paragraph{Limitations.}
+Several caveats apply. (i) The dataset comes from a single centre and a
+narrow pediatric age range, so the models may not generalise to other
+populations or acquisition protocols. (ii) The validation split is tiny,
+making model selection noisy; we mitigated but did not eliminate this with
+re-sampling. (iii) The bacterial/viral labels are derived from filenames
+and inherit the dataset's original (possibly imperfect) labelling. (iv) We
+did not explicitly correct for class imbalance with re-weighting or
+re-sampling beyond augmentation, which partly explains the low specificity.
+(v) All metrics are on a single test set; external validation would be
+needed before any real-world claim. We reiterate that the system is for
+educational use only and is not a diagnostic device.
+
+\section{Conclusion and Future Work}
+
+We presented a reproducible study of deep-learning models for pediatric
+pneumonia classification, progressing from a binary baseline to a
+clinically motivated three-class extension that distinguishes bacterial
+from viral pneumonia. Transfer-learning backbones, and especially a simple
+ensemble of ResNet18 and DenseNet121, gave the best results: an F1 of
+$0.896$ and $99.7\%$ pneumonia recall on the binary task, and a macro-F1 of
+$0.804$ on the three-class task. Calibration, threshold optimisation, and
+Grad-CAM analyses added interpretability and operational flexibility.
+
+Future work includes addressing class imbalance with weighted losses or
+focal loss, temperature scaling to improve calibration, stronger backbones
+and test-time augmentation, and---most importantly---external validation on
+independent CXR datasets to test generalisation beyond the single source
+used here. All code, configurations, and scripts needed to reproduce every
+number and figure in this report are released in the accompanying
+repository.
+
 %
 % ---- Bibliography ----
 %
-% BibTeX users should specify bibliography style 'splncs04'.
-% References will then be sorted and formatted in the correct style.
-%
-% \bibliographystyle{splncs04}
-% \bibliography{mybibliography}
-%
-\begin{thebibliography}{8}
-\bibitem{ref_article1}
-Author, F.: Article title. Journal \textbf{2}(5), 99--110 (2016)
+\begin{thebibliography}{10}
+\bibitem{ref_kermany}
+Kermany, D.S., Goldbaum, M., Cai, W., et al.: Identifying medical diagnoses
+and treatable diseases by image-based deep learning. Cell \textbf{172}(5),
+1122--1131 (2018). \doi{10.1016/j.cell.2018.02.010}
 
-\bibitem{ref_lncs1}
-Author, F., Author, S.: Title of a proceedings paper. In: Editor,
-F., Editor, S. (eds.) CONFERENCE 2016, LNCS, vol. 9999, pp. 1--13.
-Springer, Heidelberg (2016). \doi{10.10007/1234567890}
+\bibitem{ref_chexnet}
+Rajpurkar, P., Irvin, J., Zhu, K., et al.: CheXNet: Radiologist-level
+pneumonia detection on chest X-rays with deep learning.
+arXiv:1711.05225 (2017)
 
-\bibitem{ref_book1}
-Author, F., Author, S., Author, T.: Book title. 2nd edn. Publisher,
-Location (1999)
+\bibitem{ref_chestxray14}
+Wang, X., Peng, Y., Lu, L., Lu, Z., Bagheri, M., Summers, R.M.:
+ChestX-ray8: Hospital-scale chest X-ray database and benchmarks on
+weakly-supervised classification and localization of common thorax
+diseases. In: IEEE CVPR, pp. 2097--2106 (2017).
+\doi{10.1109/CVPR.2017.369}
 
-\bibitem{ref_proc1}
-Author, A.-B.: Contribution title. In: 9th International Proceedings
-on Proceedings, pp. 1--2. Publisher, Location (2010)
+\bibitem{ref_resnet}
+He, K., Zhang, X., Ren, S., Sun, J.: Deep residual learning for image
+recognition. In: IEEE CVPR, pp. 770--778 (2016).
+\doi{10.1109/CVPR.2016.90}
 
-\bibitem{ref_url1}
-LNCS Homepage, \url{http://www.springer.com/lncs}, last accessed 2023/10/25
+\bibitem{ref_densenet}
+Huang, G., Liu, Z., van der Maaten, L., Weinberger, K.Q.: Densely
+connected convolutional networks. In: IEEE CVPR, pp. 4700--4708 (2017).
+\doi{10.1109/CVPR.2017.243}
+
+\bibitem{ref_gradcam}
+Selvaraju, R.R., Cogswell, M., Das, A., Vedantam, R., Parikh, D., Batra,
+D.: Grad-CAM: Visual explanations from deep networks via gradient-based
+localization. In: IEEE ICCV, pp. 618--626 (2017).
+\doi{10.1109/ICCV.2017.74}
+
+\bibitem{ref_calibration}
+Guo, C., Pleiss, G., Sun, Y., Weinberger, K.Q.: On calibration of modern
+neural networks. In: ICML, pp. 1321--1330 (2017)
+
+\bibitem{ref_imagenet}
+Deng, J., Dong, W., Socher, R., Li, L.-J., Li, K., Fei-Fei, L.: ImageNet: A
+large-scale hierarchical image database. In: IEEE CVPR, pp. 248--255
+(2009). \doi{10.1109/CVPR.2009.5206848}
+
+\bibitem{ref_pytorch}
+Paszke, A., Gross, S., Massa, F., et al.: PyTorch: An imperative style,
+high-performance deep learning library. In: NeurIPS, pp. 8024--8035 (2019)
+
+\bibitem{ref_scikit}
+Pedregosa, F., et al.: Scikit-learn: Machine learning in Python. Journal of
+Machine Learning Research \textbf{12}, 2825--2830 (2011)
 \end{thebibliography}
+
+%
+% ---- Appendix ----
+%
+\newpage
+\appendix
+\section{Appendix: Per-Seed Training and Evaluation}
+
+This appendix provides the full per-seed material that supports the
+aggregated results in the main text. It is supplementary and does not count
+towards the page limit.
+
+\subsection{Three-Class Training Curves (per seed)}
+
+Figure~\ref{fig:app_curves} shows the fine-tuning loss and validation-F1
+curves for both backbones across the three seeds. DenseNet121 converges to
+a lower and more stable validation loss than ResNet18, consistent with its
+higher final accuracy.
+
+\begin{figure}[!ht]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_seed0_fine_tune_training_curves.png}
+\caption{DenseNet121, seed 0}
+\end{subfigure}\hfill
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_seed1_fine_tune_training_curves.png}
+\caption{DenseNet121, seed 1}
+\end{subfigure}
+
+\vspace{0.5em}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_seed0_fine_tune_training_curves.png}
+\caption{ResNet18, seed 0}
+\end{subfigure}\hfill
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_seed1_fine_tune_training_curves.png}
+\caption{ResNet18, seed 1}
+\end{subfigure}
+\caption{Three-class fine-tuning curves (representative seeds) for both
+backbones.}
+\label{fig:app_curves}
+\end{figure}
+
+\subsection{Three-Class Confusion Matrices (per seed)}
+
+Figure~\ref{fig:app_cm} shows the per-seed confusion matrices for
+DenseNet121. The NORMAL$\rightarrow$VIRUS confusion is consistent across
+seeds, confirming it is a systematic property of the task rather than an
+artefact of a single run.
+
+\begin{figure}[!ht]
+\centering
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_seed0_confusion_matrix.png}
+\caption{seed 0}
+\end{subfigure}\hfill
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_seed1_confusion_matrix.png}
+\caption{seed 1}
+\end{subfigure}\hfill
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_seed2_confusion_matrix.png}
+\caption{seed 2}
+\end{subfigure}
+\caption{Per-seed three-class confusion matrices for DenseNet121.}
+\label{fig:app_cm}
+\end{figure}
+
+\subsection{Additional Grad-CAM Examples}
+
+Figure~\ref{fig:app_gradcam} provides further three-class Grad-CAM examples,
+including additional failure modes (BACTERIA misread as VIRUS, and NORMAL
+misread as BACTERIA).
+
+\begin{figure}[!ht]
+\centering
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_correct_NORMAL_IM-0001-0001.png}
+\caption{Correct: NORMAL}
+\end{subfigure}\hfill
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_wrong_BACTERIA_as_VIRUS_person102_bacteria_4.png}
+\caption{Error: BACTERIA as VIRUS}
+\end{subfigure}\hfill
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_wrong_NORMAL_as_BACTERIA_IM-0011-0001-0002.png}
+\caption{Error: NORMAL as BACTERIA}
+\end{subfigure}
+\caption{Additional three-class Grad-CAM overlays (DenseNet121).}
+\label{fig:app_gradcam}
+\end{figure}
+
 \end{document}

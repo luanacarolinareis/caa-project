@@ -21,19 +21,23 @@ data/raw/
 
 # Generated outputs
 results/checkpoints/
+results/_demo/
 *.pt
 *.pth
 *.ckpt
 
-# LaTeX build artifacts
-Additional Files/Reports/**/out/*.bbl
-Additional Files/Reports/**/out/*.blg
-Additional Files/Reports/**/out/*.aux
-Additional Files/Reports/**/out/*.out
-Additional Files/Reports/**/out/*.synctex.gz
-Additional Files/Reports/**/out/*.log
-Additional Files/Reports/**/out/*.fls
-Additional Files/Reports/**/out/*.fdb_latexmk
+# LaTeX build artifacts (keep the compiled report PDF, drop intermediates)
+*.aux
+*.bbl
+*.blg
+*.out
+*.synctex.gz
+*.log
+*.fls
+*.fdb_latexmk
+*.toc
+*.lof
+*.lot
 
 # OS/editor files
 .DS_Store
