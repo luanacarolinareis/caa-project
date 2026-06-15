@@ -1,0 +1,225 @@
+﻿
+======================================================================
+  BINARY PIPELINE  (NORMAL vs PNEUMONIA)
+======================================================================
+Project root : C:\Users\Carolina\OneDrive - 4sb643\Ambiente de Trabalho\UA\CAA\Project
+Python       : C:\Users\Carolina\OneDrive - 4sb643\Ambiente de Trabalho\UA\CAA\Project\.venv\Scripts\python.exe
+Config       : configs/default.yaml
+Seeds        : 0, 1, 2
+Force        : False
+Log file     : results\logs\binary_run_2026-06-15_17-27-08.log
+Started      : 2026-06-15 17:27:08
+
+======================================================================
+  1. TRAINING
+======================================================================
+>>> SKIP train custom_cnn seed 0 (checkpoint exists: results\checkpoints\custom_cnn_seed0.pt). Use -Force to retrain.
+>>> SKIP train custom_cnn seed 1 (checkpoint exists: results\checkpoints\custom_cnn_seed1.pt). Use -Force to retrain.
+>>> SKIP train custom_cnn seed 2 (checkpoint exists: results\checkpoints\custom_cnn_seed2.pt). Use -Force to retrain.
+>>> SKIP train resnet18 seed 0 (checkpoint exists: results\checkpoints\resnet18_seed0.pt). Use -Force to retrain.
+>>> SKIP train resnet18 seed 1 (checkpoint exists: results\checkpoints\resnet18_seed1.pt). Use -Force to retrain.
+>>> SKIP train resnet18 seed 2 (checkpoint exists: results\checkpoints\resnet18_seed2.pt). Use -Force to retrain.
+>>> SKIP train densenet121 seed 0 (checkpoint exists: results\checkpoints\densenet121_seed0.pt). Use -Force to retrain.
+>>> SKIP train densenet121 seed 1 (checkpoint exists: results\checkpoints\densenet121_seed1.pt). Use -Force to retrain.
+>>> SKIP train densenet121 seed 2 (checkpoint exists: results\checkpoints\densenet121_seed2.pt). Use -Force to retrain.
+
+======================================================================
+  2. EVALUATION (test split)
+======================================================================
+
+>>> evaluate custom_cnn seed 0
+Saved metrics: results\metrics\custom_cnn_seed0.json
+accuracy=0.8109 precision=0.8542 recall=0.8410 f1=0.8475 auroc=0.8892395353933815
+inference_time_ms_per_image=14.287
+    OK  (16 s)  -- evaluate custom_cnn seed 0
+
+>>> evaluate custom_cnn seed 1
+Saved metrics: results\metrics\custom_cnn_seed1.json
+accuracy=0.6522 precision=0.6439 recall=0.9923 f1=0.7810 auroc=0.8689129958360727
+inference_time_ms_per_image=15.411
+    OK  (17 s)  -- evaluate custom_cnn seed 1
+
+>>> evaluate custom_cnn seed 2
+Saved metrics: results\metrics\custom_cnn_seed2.json
+accuracy=0.8061 precision=0.8064 recall=0.9077 f1=0.8540 auroc=0.8996712689020383
+inference_time_ms_per_image=12.663
+    OK  (14 s)  -- evaluate custom_cnn seed 2
+
+>>> evaluate resnet18 seed 0
+Saved metrics: results\metrics\resnet18_seed0.json
+accuracy=0.8301 precision=0.7886 recall=0.9949 f1=0.8798 auroc=0.9544926583388122
+inference_time_ms_per_image=14.870
+    OK  (16 s)  -- evaluate resnet18 seed 0
+
+>>> evaluate resnet18 seed 1
+Saved metrics: results\metrics\resnet18_seed1.json
+accuracy=0.8109 precision=0.7709 recall=0.9923 f1=0.8677 auroc=0.9456169186938417
+inference_time_ms_per_image=15.423
+    OK  (17 s)  -- evaluate resnet18 seed 1
+
+>>> evaluate resnet18 seed 2
+Saved metrics: results\metrics\resnet18_seed2.json
+accuracy=0.8478 precision=0.8118 recall=0.9846 f1=0.8899 auroc=0.9473044049967126
+inference_time_ms_per_image=14.389
+    OK  (17 s)  -- evaluate resnet18 seed 2
+
+>>> evaluate densenet121 seed 0
+Saved metrics: results\metrics\densenet121_seed0.json
+accuracy=0.8462 precision=0.8050 recall=0.9949 f1=0.8899 auroc=0.9653298268682884
+inference_time_ms_per_image=15.673
+    OK  (17 s)  -- evaluate densenet121 seed 0
+
+>>> evaluate densenet121 seed 1
+Saved metrics: results\metrics\densenet121_seed1.json
+accuracy=0.8574 precision=0.8155 recall=0.9974 f1=0.8973 auroc=0.9734440061363139
+inference_time_ms_per_image=16.390
+    OK  (18 s)  -- evaluate densenet121 seed 1
+
+>>> evaluate densenet121 seed 2
+Saved metrics: results\metrics\densenet121_seed2.json
+accuracy=0.8189 precision=0.7764 recall=0.9974 f1=0.8732 auroc=0.9605413105413105
+inference_time_ms_per_image=15.797
+    OK  (18 s)  -- evaluate densenet121 seed 2
+
+======================================================================
+  3. ENSEMBLE (resnet18 + densenet121)
+======================================================================
+
+>>> binary ensemble
+Config : configs\default.yaml
+Task   : binary
+Device : cuda
+Members: ['resnet18', 'densenet121'] Î seeds [0, 1, 2]
+
+  loaded resnet18 seed=0
+  loaded resnet18 seed=1
+  loaded resnet18 seed=2
+  loaded densenet121 seed=0
+  loaded densenet121 seed=1
+  loaded densenet121 seed=2
+
+Saved: results\metrics\ensemble_resnet18_densenet121.json
+
+=======================================================
+  ENSEMBLE (6 members)
+=======================================================
+  Accuracy   : 0.8558
+  Precision  : 0.8138
+  Recall     : 0.9974
+  Specificity: 0.6197
+  F1         : 0.8963
+  AUROC      : 0.9629903572211264
+    OK  (71 s)  -- binary ensemble
+
+======================================================================
+  4. RESULT TABLES
+======================================================================
+
+>>> make_result_tables (binary)
+Saved per-seed CSV: results\metrics\all_seeds_results.csv
+Saved summary CSV: results\metrics\final_results.csv
+Saved markdown table: results\metrics\final_results.md
+
+| Model | Accuracy | Precision | Recall | Specificity | F1 | AUROC | Inference (ms/img) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| custom_cnn | 0.7564 ▒ 0.0902 | 0.7682 ▒ 0.1102 | 0.9137 ▒ 0.0758 | 0.4943 ▒ 0.3594 | 0.8275 ▒ 0.0404 | 0.8859 ▒ 0.0156 | 14.1204 ▒ 1.3815 |
+| resnet18 | 0.8296 ▒ 0.0184 | 0.7905 ▒ 0.0205 | 0.9906 ▒ 0.0053 | 0.5613 ▒ 0.0558 | 0.8792 ▒ 0.0111 | 0.9491 ▒ 0.0047 | 14.8943 ▒ 0.5175 |
+| densenet121 | 0.8408 ▒ 0.0198 | 0.7990 ▒ 0.0202 | 0.9966 ▒ 0.0015 | 0.5812 ▒ 0.0534 | 0.8868 ▒ 0.0124 | 0.9664 ▒ 0.0065 | 15.9532 ▒ 0.3835 |
+| ensemble_resnet18_densenet121 | 0.8558 | 0.8138 | 0.9974 | 0.6197 | 0.8963 | 0.9630 | ù |
+    OK  (1 s)  -- make_result_tables (binary)
+
+======================================================================
+  5. PLOTS
+======================================================================
+
+>>> generate_plots_binary
+=== Confusion matrices ===
+Saved: results\figures\custom_cnn_seed0_confusion_matrix.png
+Saved: results\figures\custom_cnn_seed1_confusion_matrix.png
+Saved: results\figures\custom_cnn_seed2_confusion_matrix.png
+Saved: results\figures\resnet18_seed0_confusion_matrix.png
+Saved: results\figures\resnet18_seed1_confusion_matrix.png
+Saved: results\figures\resnet18_seed2_confusion_matrix.png
+Saved: results\figures\densenet121_seed0_confusion_matrix.png
+Saved: results\figures\densenet121_seed1_confusion_matrix.png
+Saved: results\figures\densenet121_seed2_confusion_matrix.png
+Saved: results\figures\ensemble_binary_confusion_matrix.png
+
+=== Training curves ===
+Saved: results\figures\custom_cnn_seed0_training_curves.png
+Saved: results\figures\custom_cnn_seed1_training_curves.png
+Saved: results\figures\custom_cnn_seed2_training_curves.png
+Saved: results\figures\resnet18_seed0_head_only_training_curves.png
+Saved: results\figures\resnet18_seed0_fine_tune_training_curves.png
+Saved: results\figures\resnet18_seed1_head_only_training_curves.png
+Saved: results\figures\resnet18_seed1_fine_tune_training_curves.png
+Saved: results\figures\resnet18_seed2_head_only_training_curves.png
+Saved: results\figures\resnet18_seed2_fine_tune_training_curves.png
+Saved: results\figures\densenet121_seed0_head_only_training_curves.png
+Saved: results\figures\densenet121_seed0_fine_tune_training_curves.png
+Saved: results\figures\densenet121_seed1_head_only_training_curves.png
+Saved: results\figures\densenet121_seed1_fine_tune_training_curves.png
+Saved: results\figures\densenet121_seed2_head_only_training_curves.png
+Saved: results\figures\densenet121_seed2_fine_tune_training_curves.png
+
+=== Metric comparison ===
+Saved: results\figures\metric_comparison_binary.png
+    OK  (15 s)  -- generate_plots_binary
+
+======================================================================
+  6. GRAD-CAM (densenet121 + resnet18)
+======================================================================
+
+>>> grad-cam densenet121
+[TN] Saved: results\gradcam\densenet121_true_negative_normal_IM-0001-0001.png  (predicted=NORMAL)
+[FP] Saved: results\gradcam\densenet121_false_positive_normal_IM-0019-0001.png  (predicted=PNEUMONIA)
+[TP] Saved: results\gradcam\densenet121_true_positive_pneumonia_person100_bacteria_4.png  (predicted=PNEUMONIA)
+[FN] Saved: results\gradcam\densenet121_false_negative_pneumonia_person154_bacteria_7.png  (predicted=NORMAL)
+    OK  (28 s)  -- grad-cam densenet121
+
+>>> grad-cam resnet18
+[TN] Saved: results\gradcam\resnet18_true_negative_normal_IM-0001-0001.png  (predicted=NORMAL)
+[FP] Saved: results\gradcam\resnet18_false_positive_normal_IM-0006-0001.png  (predicted=PNEUMONIA)
+[TP] Saved: results\gradcam\resnet18_true_positive_pneumonia_person100_bacteria_4.png  (predicted=PNEUMONIA)
+[FN] Saved: results\gradcam\resnet18_false_negative_pneumonia_person154_bacteria_7.png  (predicted=NORMAL)
+    OK  (20 s)  -- grad-cam resnet18
+
+======================================================================
+  7. MARKDOWN TRAINING LOG
+======================================================================
+
+>>> log_to_markdown
+Wrote results\run_binary.md  (1 run(s))
+    OK  (0 s)  -- log_to_markdown
+
+======================================================================
+  SUMMARY
+======================================================================
+  SKIP  train custom_cnn seed 0 (exists)
+  SKIP  train custom_cnn seed 1 (exists)
+  SKIP  train custom_cnn seed 2 (exists)
+  SKIP  train resnet18 seed 0 (exists)
+  SKIP  train resnet18 seed 1 (exists)
+  SKIP  train resnet18 seed 2 (exists)
+  SKIP  train densenet121 seed 0 (exists)
+  SKIP  train densenet121 seed 1 (exists)
+  SKIP  train densenet121 seed 2 (exists)
+  OK    evaluate custom_cnn seed 0  (16 s)
+  OK    evaluate custom_cnn seed 1  (17 s)
+  OK    evaluate custom_cnn seed 2  (14 s)
+  OK    evaluate resnet18 seed 0  (16 s)
+  OK    evaluate resnet18 seed 1  (17 s)
+  OK    evaluate resnet18 seed 2  (17 s)
+  OK    evaluate densenet121 seed 0  (17 s)
+  OK    evaluate densenet121 seed 1  (18 s)
+  OK    evaluate densenet121 seed 2  (18 s)
+  OK    binary ensemble  (71 s)
+  OK    make_result_tables (binary)  (1 s)
+  OK    generate_plots_binary  (15 s)
+  OK    grad-cam densenet121  (28 s)
+  OK    grad-cam resnet18  (20 s)
+  OK    log_to_markdown  (0 s)
+
+Finished     : 2026-06-15 17:31:54
+Full log     : results\logs\binary_run_2026-06-15_17-27-08.log
+Epoch table  : results/run_binary.md

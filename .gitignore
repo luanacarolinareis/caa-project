@@ -32,7 +32,6 @@ results/_demo/
 *.blg
 *.out
 *.synctex.gz
-*.log
 *.fls
 *.fdb_latexmk
 *.toc
