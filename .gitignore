@@ -37,6 +37,7 @@ results/_demo/
 *.toc
 *.lof
 *.lot
+*.log
 
 # OS/editor files
 .DS_Store
