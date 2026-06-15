@@ -716,7 +716,8 @@ improve calibration, stronger backbones and test-time augmentation,
 and---most importantly---external validation on independent CXR datasets to
 test generalisation beyond the single source used here. All code, configurations, and scripts needed to reproduce every
 number and figure in this report are released in the accompanying
-repository.
+repository, and the trained model weights are published on the Hugging Face
+Hub at \url{https://huggingface.co/luanacarolina/pneumonia-chest-xray-classifier}.
 
 %
 % ---- Bibliography ----
@@ -930,5 +931,266 @@ misread as BACTERIA).
 \caption{Additional three-class Grad-CAM overlays (DenseNet121).}
 \label{fig:app_gradcam}
 \end{figure}
+
+\subsection{Complete Figure Set}
+
+For completeness, this subsection collects every remaining figure produced by the pipeline that is not shown in the main text or above: all per-seed confusion matrices and training curves for both tasks, the per-seed Grad-CAM overlays for ResNet18, and a few task-level summary figures. They are included for reproducibility and add no new claims.
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{custom_cnn_seed0_confusion_matrix.png}
+\caption{custom cnn seed0 confusion matrix}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{custom_cnn_seed1_confusion_matrix.png}
+\caption{custom cnn seed1 confusion matrix}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{custom_cnn_seed2_confusion_matrix.png}
+\caption{custom cnn seed2 confusion matrix}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_seed0_confusion_matrix.png}
+\caption{densenet121 seed0 confusion matrix}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_seed1_confusion_matrix.png}
+\caption{densenet121 seed1 confusion matrix}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_seed2_confusion_matrix.png}
+\caption{densenet121 seed2 confusion matrix}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_seed0_confusion_matrix.png}
+\caption{resnet18 seed0 confusion matrix}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_seed1_confusion_matrix.png}
+\caption{resnet18 seed1 confusion matrix}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_seed2_confusion_matrix.png}
+\caption{resnet18 seed2 confusion matrix}
+\end{subfigure}
+\caption{Binary confusion matrices (per seed), all models.}
+\label{fig:app_cmb}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{custom_cnn_seed0_training_curves.png}
+\caption{custom cnn seed0 training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{custom_cnn_seed1_training_curves.png}
+\caption{custom cnn seed1 training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{custom_cnn_seed2_training_curves.png}
+\caption{custom cnn seed2 training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{custom_cnn_training_curves.png}
+\caption{custom cnn training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_seed0_fine_tune_training_curves.png}
+\caption{densenet121 seed0 fine tune training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_seed0_head_only_training_curves.png}
+\caption{densenet121 seed0 head only training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_seed1_fine_tune_training_curves.png}
+\caption{densenet121 seed1 fine tune training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_seed1_head_only_training_curves.png}
+\caption{densenet121 seed1 head only training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_seed2_fine_tune_training_curves.png}
+\caption{densenet121 seed2 fine tune training curves}
+\end{subfigure}
+\caption{Binary training curves (per seed and phase), all models.}
+\label{fig:app_curb}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_seed2_head_only_training_curves.png}
+\caption{densenet121 seed2 head only training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_seed0_fine_tune_training_curves.png}
+\caption{resnet18 seed0 fine tune training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_seed0_head_only_training_curves.png}
+\caption{resnet18 seed0 head only training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_seed1_fine_tune_training_curves.png}
+\caption{resnet18 seed1 fine tune training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_seed1_head_only_training_curves.png}
+\caption{resnet18 seed1 head only training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_seed2_fine_tune_training_curves.png}
+\caption{resnet18 seed2 fine tune training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_seed2_head_only_training_curves.png}
+\caption{resnet18 seed2 head only training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_training_curves.png}
+\caption{resnet18 training curves}
+\end{subfigure}
+\caption{Binary training curves (per seed and phase), all models. (continued)}
+\label{fig:app_curb_1}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_seed0_confusion_matrix.png}
+\caption{resnet18 3class seed0 confusion matrix}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_seed1_confusion_matrix.png}
+\caption{resnet18 3class seed1 confusion matrix}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_seed2_confusion_matrix.png}
+\caption{resnet18 3class seed2 confusion matrix}
+\end{subfigure}
+\caption{Three-class confusion matrices for ResNet18 (per seed).}
+\label{fig:app_cm3b}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_seed0_head_only_training_curves.png}
+\caption{densenet121 3class seed0 head only training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_seed1_head_only_training_curves.png}
+\caption{densenet121 3class seed1 head only training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_seed2_fine_tune_training_curves.png}
+\caption{densenet121 3class seed2 fine tune training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_seed2_head_only_training_curves.png}
+\caption{densenet121 3class seed2 head only training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_seed0_head_only_training_curves.png}
+\caption{resnet18 3class seed0 head only training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_seed1_head_only_training_curves.png}
+\caption{resnet18 3class seed1 head only training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_seed2_fine_tune_training_curves.png}
+\caption{resnet18 3class seed2 fine tune training curves}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_seed2_head_only_training_curves.png}
+\caption{resnet18 3class seed2 head only training curves}
+\end{subfigure}
+\caption{Additional three-class training curves (per seed and phase).}
+\label{fig:app_cur3b}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_false_negative_pneumonia_person154_bacteria_7.png}
+\caption{resnet18 false negative pneumonia person154 bacteria 7}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_false_positive_normal_IM-0006-0001.png}
+\caption{resnet18 false positive normal IM-0006-0001}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_true_negative_normal_IM-0001-0001.png}
+\caption{resnet18 true negative normal IM-0001-0001}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_true_positive_pneumonia_person100_bacteria_4.png}
+\caption{resnet18 true positive pneumonia person100 bacteria 4}
+\end{subfigure}
+\caption{Binary Grad-CAM overlays for ResNet18 (TP / TN / FP / FN).}
+\label{fig:app_gcb}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{densenet121_3class_wrong_VIRUS_as_BACTERIA_person10_virus_35.png}
+\caption{densenet121 3class wrong VIRUS as BACTERIA person10 virus 35}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_correct_BACTERIA_person100_bacteria_4.png}
+\caption{resnet18 3class correct BACTERIA person100 bacteria 4}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_correct_NORMAL_IM-0001-0001.png}
+\caption{resnet18 3class correct NORMAL IM-0001-0001}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_wrong_BACTERIA_as_VIRUS_person110_bacteria_5.png}
+\caption{resnet18 3class wrong BACTERIA as VIRUS person110 bacteria 5}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_wrong_NORMAL_as_BACTERIA_IM-0022-0001.png}
+\caption{resnet18 3class wrong NORMAL as BACTERIA IM-0022-0001}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_wrong_NORMAL_as_VIRUS_IM-0015-0001.png}
+\caption{resnet18 3class wrong NORMAL as VIRUS IM-0015-0001}
+\end{subfigure}\hfill
+\begin{subfigure}{0.31\textwidth}
+\includegraphics[width=\textwidth]{resnet18_3class_wrong_VIRUS_as_BACTERIA_person10_virus_35.png}
+\caption{resnet18 3class wrong VIRUS as BACTERIA person10 virus 35}
+\end{subfigure}
+\caption{Additional three-class Grad-CAM overlays (ResNet18, plus the DenseNet121 VIRUS-as-BACTERIA case).}
+\label{fig:app_gc3b}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{0.46\textwidth}
+\includegraphics[width=\textwidth]{densenet121_flat_vs_hierarchical_confusion.png}
+\caption{densenet121 flat vs hierarchical confusion}
+\end{subfigure}\hfill
+\begin{subfigure}{0.46\textwidth}
+\includegraphics[width=\textwidth]{sample_images_three_class.png}
+\caption{sample images three class}
+\end{subfigure}
+\caption{Dataset sample images per class, and the flat-vs-hierarchical confusion matrices.}
+\label{fig:app_other2}
+\end{figure}
+\FloatBarrier
+
 
 \end{document}
