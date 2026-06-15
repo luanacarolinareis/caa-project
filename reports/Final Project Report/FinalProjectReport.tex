@@ -224,16 +224,6 @@ Test  & 234     & 242     & 148     & 624 \\
 \end{tabular}
 \end{table}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{class_distribution.png}
-\caption{Binary class distribution by split. \emph{Left:} the training and
-test sets are dominated by PNEUMONIA ($\approx2.9\!:\!1$ in training).
-\emph{Right:} the official validation split contains only 16 images,
-motivating the re-sampling strategy used for the three-class task.}
-\label{fig:dist}
-\end{figure}
-
 Two characteristics of the dataset shape our methodology. First, the
 training set is \emph{class-imbalanced}: PNEUMONIA images outnumber NORMAL
 images roughly $2.9\!:\!1$, and within pneumonia, bacterial cases dominate
@@ -242,6 +232,16 @@ which makes model selection noisy; for the three-class task we therefore
 re-sample a small balanced validation set from the training data with a
 fixed seed whenever a class is missing. All reported metrics are computed
 on the untouched official test set of 624 images.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{class_distribution.png}
+\caption{Binary class distribution by split. \emph{Left:} the training and
+test sets are dominated by PNEUMONIA ($\approx2.9\!:\!1$ in training).
+\emph{Right:} the official validation split contains only 16 images,
+motivating the re-sampling strategy used for the three-class task.}
+\label{fig:dist}
+\end{figure}
 
 \section{Methodology}
 
@@ -280,7 +280,7 @@ gradient flow in deep networks; DenseNet instead \emph{concatenates} each
 layer's output with all preceding feature maps, maximising feature reuse with
 fewer parameters.
 
-\begin{figure}[t]
+\begin{figure}[H]
 \centering
 \begin{subfigure}{0.49\textwidth}
 \includegraphics[width=\textwidth]{resnet-explanation.png}
@@ -604,7 +604,7 @@ NORMAL$\rightarrow$VIRUS failure shows diffuse activation over otherwise
 normal lungs, visually corroborating the dominant error mode identified in
 Table~\ref{tab:perclass}.
 
-\begin{figure}[t]
+\begin{figure}[H]
 \centering
 \begin{subfigure}{0.21\textwidth}
 \includegraphics[width=\textwidth]{densenet121_true_positive_pneumonia_person100_bacteria_4.png}
@@ -978,39 +978,39 @@ For completeness, this subsection collects every remaining figure produced by th
 
 \begin{figure}[h]
 \centering
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{custom_cnn_seed0_training_curves.png}
 \caption{custom cnn seed0 training curves}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{custom_cnn_seed1_training_curves.png}
 \caption{custom cnn seed1 training curves}
-\end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\end{subfigure}\\[0.6em]
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{custom_cnn_seed2_training_curves.png}
 \caption{custom cnn seed2 training curves}
-\end{subfigure}\\[0.6em]
-\begin{subfigure}{0.31\textwidth}
+\end{subfigure}\hfill
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{custom_cnn_training_curves.png}
 \caption{custom cnn training curves}
-\end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\end{subfigure}\\[0.6em]
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed0_fine_tune_training_curves.png}
 \caption{densenet121 seed0 fine tune training curves}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed0_head_only_training_curves.png}
 \caption{densenet121 seed0 head only training curves}
 \end{subfigure}\\[0.6em]
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed1_fine_tune_training_curves.png}
 \caption{densenet121 seed1 fine tune training curves}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed1_head_only_training_curves.png}
 \caption{densenet121 seed1 head only training curves}
-\end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\end{subfigure}\\[0.6em]
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed2_fine_tune_training_curves.png}
 \caption{densenet121 seed2 fine tune training curves}
 \end{subfigure}
@@ -1021,35 +1021,35 @@ For completeness, this subsection collects every remaining figure produced by th
 
 \begin{figure}[h]
 \centering
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed2_head_only_training_curves.png}
 \caption{densenet121 seed2 head only training curves}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed0_fine_tune_training_curves.png}
 \caption{resnet18 seed0 fine tune training curves}
-\end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\end{subfigure}\\[0.6em]
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed0_head_only_training_curves.png}
 \caption{resnet18 seed0 head only training curves}
-\end{subfigure}\\[0.6em]
-\begin{subfigure}{0.31\textwidth}
+\end{subfigure}\hfill
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed1_fine_tune_training_curves.png}
 \caption{resnet18 seed1 fine tune training curves}
-\end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\end{subfigure}\\[0.6em]
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed1_head_only_training_curves.png}
 \caption{resnet18 seed1 head only training curves}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed2_fine_tune_training_curves.png}
 \caption{resnet18 seed2 fine tune training curves}
 \end{subfigure}\\[0.6em]
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed2_head_only_training_curves.png}
 \caption{resnet18 seed2 head only training curves}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{resnet18_training_curves.png}
 \caption{resnet18 training curves}
 \end{subfigure}
@@ -1079,35 +1079,35 @@ For completeness, this subsection collects every remaining figure produced by th
 
 \begin{figure}[h]
 \centering
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_seed0_head_only_training_curves.png}
 \caption{densenet121 3class seed0 head only training curves}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_seed1_head_only_training_curves.png}
 \caption{densenet121 3class seed1 head only training curves}
-\end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\end{subfigure}\\[0.6em]
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_seed2_fine_tune_training_curves.png}
 \caption{densenet121 3class seed2 fine tune training curves}
-\end{subfigure}\\[0.6em]
-\begin{subfigure}{0.31\textwidth}
+\end{subfigure}\hfill
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_seed2_head_only_training_curves.png}
 \caption{densenet121 3class seed2 head only training curves}
-\end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\end{subfigure}\\[0.6em]
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_seed0_head_only_training_curves.png}
 \caption{resnet18 3class seed0 head only training curves}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_seed1_head_only_training_curves.png}
 \caption{resnet18 3class seed1 head only training curves}
 \end{subfigure}\\[0.6em]
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_seed2_fine_tune_training_curves.png}
 \caption{resnet18 3class seed2 fine tune training curves}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.45\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_seed2_head_only_training_curves.png}
 \caption{resnet18 3class seed2 head only training curves}
 \end{subfigure}
@@ -1176,11 +1176,11 @@ For completeness, this subsection collects every remaining figure produced by th
 
 \begin{figure}[h]
 \centering
-\begin{subfigure}{0.46\textwidth}
+\begin{subfigure}{0.75\textwidth}
 \includegraphics[width=\textwidth]{densenet121_flat_vs_hierarchical_confusion.png}
 \caption{densenet121 flat vs hierarchical confusion}
-\end{subfigure}\hfill
-\begin{subfigure}{0.46\textwidth}
+\end{subfigure}\\[0.8em]
+\begin{subfigure}{0.75\textwidth}
 \includegraphics[width=\textwidth]{sample_images_three_class.png}
 \caption{sample images three class}
 \end{subfigure}
