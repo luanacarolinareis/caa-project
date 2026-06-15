@@ -1,6 +1,6 @@
 project:
   name: pneumonia-classification
-  task: three_class_classification
+  task: bacteria_virus_classification  # Stage B of the hierarchical approach
 
 data:
   root_dir: data/chest_xray
@@ -9,11 +9,14 @@ data:
   test_dir: test
   image_size: 224
   num_channels: 3
-  # Fraction of each training class held out as a stratified validation set
-  # The Kaggle val/ folder has only 16 images and no VIRUS, so we resplit
+  # Patient-aware stratified validation split (the Kaggle val/ has no virus)
   val_fraction: 0.12
+  # Two classes for Stage B
+
+  # NOTE: this is a 2-way softmax (cross-entropy),
+  # NOT the binary BCE head used by the NORMAL-vs-PNEUMONIA task, so that it
+  # reuses the same class-weight / F1-macro selection machinery
   class_names:
-    - NORMAL
     - BACTERIA
     - VIRUS
 
@@ -36,11 +39,7 @@ training:
   learning_rate: 0.0001
   optimizer: adam
   loss: cross_entropy
-  # Counter the train imbalance (BACTERIA ~2x NORMAL/VIRUS) with
-  # inverse-frequency class weights in the cross-entropy loss
   use_class_weights: true
-  # Select the best checkpoint by validation F1-macro rather than loss:
-  # F1-macro directly tracks balanced performance on the minority classes
   select_by: f1_macro
   scheduler:
     name: reduce_lr_on_plateau
@@ -56,12 +55,8 @@ training:
 
 models:
   available:
-    - custom_cnn
     - resnet18
     - densenet121
-  baseline:
-    name: custom_cnn
-    max_epochs: 20
   transfer_learning:
     names:
       - resnet18
