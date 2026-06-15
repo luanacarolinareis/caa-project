@@ -17,6 +17,7 @@
 \usepackage{amsmath}
 \usepackage{subcaption}
 \usepackage{placeins} % provides \FloatBarrier (used manually in the appendix)
+\usepackage{float}     % provides the [H] specifier to pin a figure exactly in place
 \usepackage{eso-pic}   % absolute placement of the cover-page logos
 %
 % If you use the hyperref package, please uncomment the following two lines
@@ -699,6 +700,8 @@ released in the accompanying repository, and the trained model weights are
 published on the Hugging Face Hub at
 \url{https://huggingface.co/luanacarolina/pneumonia-chest-xray-classifier}.
 
+\newpage
+
 %
 % ---- Bibliography ----
 %
@@ -837,7 +840,7 @@ over-confidence. The transfer-learning models concentrate their predictions
 in the high-confidence bins, far from the diagonal, confirming the
 over-confidence reported by the ECE values in Table~\ref{tab:calibration}.
 
-\begin{figure}[!ht]
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.9\textwidth]{reliability_diagrams.png}
 \caption{Reliability diagrams for all models (binary and three-class).}
@@ -852,7 +855,7 @@ curves for both backbones across the three seeds. DenseNet121 converges to
 a lower and more stable validation loss than ResNet18, consistent with its
 higher final accuracy.
 
-\begin{figure}[!ht]
+\begin{figure}[h]
 \centering
 \begin{subfigure}{0.48\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_seed0_fine_tune_training_curves.png}
@@ -861,9 +864,7 @@ higher final accuracy.
 \begin{subfigure}{0.48\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_seed1_fine_tune_training_curves.png}
 \caption{DenseNet121, seed 1}
-\end{subfigure}
-
-\vspace{0.5em}
+\end{subfigure}\\[0.6em]
 \begin{subfigure}{0.48\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_seed0_fine_tune_training_curves.png}
 \caption{ResNet18, seed 0}
@@ -885,7 +886,7 @@ DenseNet121. The NORMAL$\rightarrow$VIRUS confusion is consistent across
 seeds, confirming it is a systematic property of the task rather than an
 artefact of a single run.
 
-\begin{figure}[!ht]
+\begin{figure}[h]
 \centering
 \begin{subfigure}{0.32\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_seed0_confusion_matrix.png}
@@ -910,17 +911,17 @@ Figure~\ref{fig:app_gradcam} provides further three-class Grad-CAM examples,
 including additional failure modes (BACTERIA misread as VIRUS, and NORMAL
 misread as BACTERIA).
 
-\begin{figure}[!ht]
+\begin{figure}[H]
 \centering
-\begin{subfigure}{0.32\textwidth}
+\begin{subfigure}{0.24\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_correct_NORMAL_IM-0001-0001.png}
 \caption{Correct: NORMAL}
 \end{subfigure}\hfill
-\begin{subfigure}{0.32\textwidth}
+\begin{subfigure}{0.24\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_wrong_BACTERIA_as_VIRUS_person117_bacteria_5.png}
 \caption{Error: BACTERIA as VIRUS}
 \end{subfigure}\hfill
-\begin{subfigure}{0.32\textwidth}
+\begin{subfigure}{0.24\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_wrong_NORMAL_as_BACTERIA_IM-0022-0001.png}
 \caption{Error: NORMAL as BACTERIA}
 \end{subfigure}
@@ -932,50 +933,50 @@ misread as BACTERIA).
 
 For completeness, this subsection collects every remaining figure produced by the pipeline that is not shown in the main text or above: all per-seed confusion matrices and training curves for both tasks, the per-seed Grad-CAM overlays for ResNet18, and a few task-level summary figures. They are included for reproducibility and add no new claims.
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \centering
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.22\textwidth}
 \includegraphics[width=\textwidth]{custom_cnn_seed0_confusion_matrix.png}
-\caption{custom cnn seed0 confusion matrix}
+\caption{custom cnn seed0}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.22\textwidth}
 \includegraphics[width=\textwidth]{custom_cnn_seed1_confusion_matrix.png}
-\caption{custom cnn seed1 confusion matrix}
+\caption{custom cnn seed1}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.22\textwidth}
 \includegraphics[width=\textwidth]{custom_cnn_seed2_confusion_matrix.png}
-\caption{custom cnn seed2 confusion matrix}
-\end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\caption{custom cnn seed2}
+\end{subfigure}\\[0.3em]
+\begin{subfigure}{0.22\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed0_confusion_matrix.png}
-\caption{densenet121 seed0 confusion matrix}
+\caption{densenet121 seed0}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.22\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed1_confusion_matrix.png}
-\caption{densenet121 seed1 confusion matrix}
+\caption{densenet121 seed1}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.22\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed2_confusion_matrix.png}
-\caption{densenet121 seed2 confusion matrix}
-\end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\caption{densenet121 seed2}
+\end{subfigure}\\[0.3em]
+\begin{subfigure}{0.22\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed0_confusion_matrix.png}
-\caption{resnet18 seed0 confusion matrix}
+\caption{resnet18 seed0}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.22\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed1_confusion_matrix.png}
-\caption{resnet18 seed1 confusion matrix}
+\caption{resnet18 seed1}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.22\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed2_confusion_matrix.png}
-\caption{resnet18 seed2 confusion matrix}
+\caption{resnet18 seed2}
 \end{subfigure}
 \caption{Binary confusion matrices (per seed), all models.}
 \label{fig:app_cmb}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[ht]
+\begin{figure}[h]
 \centering
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{custom_cnn_seed0_training_curves.png}
@@ -988,7 +989,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{custom_cnn_seed2_training_curves.png}
 \caption{custom cnn seed2 training curves}
-\end{subfigure}\hfill
+\end{subfigure}\\[0.6em]
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{custom_cnn_training_curves.png}
 \caption{custom cnn training curves}
@@ -1000,7 +1001,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed0_head_only_training_curves.png}
 \caption{densenet121 seed0 head only training curves}
-\end{subfigure}\hfill
+\end{subfigure}\\[0.6em]
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed1_fine_tune_training_curves.png}
 \caption{densenet121 seed1 fine tune training curves}
@@ -1018,7 +1019,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[ht]
+\begin{figure}[h]
 \centering
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{densenet121_seed2_head_only_training_curves.png}
@@ -1031,7 +1032,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed0_head_only_training_curves.png}
 \caption{resnet18 seed0 head only training curves}
-\end{subfigure}\hfill
+\end{subfigure}\\[0.6em]
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed1_fine_tune_training_curves.png}
 \caption{resnet18 seed1 fine tune training curves}
@@ -1043,7 +1044,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed2_fine_tune_training_curves.png}
 \caption{resnet18 seed2 fine tune training curves}
-\end{subfigure}\hfill
+\end{subfigure}\\[0.6em]
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{resnet18_seed2_head_only_training_curves.png}
 \caption{resnet18 seed2 head only training curves}
@@ -1057,7 +1058,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[ht]
+\begin{figure}[h]
 \centering
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_seed0_confusion_matrix.png}
@@ -1076,7 +1077,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[ht]
+\begin{figure}[h]
 \centering
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_seed0_head_only_training_curves.png}
@@ -1089,7 +1090,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_seed2_fine_tune_training_curves.png}
 \caption{densenet121 3class seed2 fine tune training curves}
-\end{subfigure}\hfill
+\end{subfigure}\\[0.6em]
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_seed2_head_only_training_curves.png}
 \caption{densenet121 3class seed2 head only training curves}
@@ -1101,7 +1102,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_seed1_head_only_training_curves.png}
 \caption{resnet18 3class seed1 head only training curves}
-\end{subfigure}\hfill
+\end{subfigure}\\[0.6em]
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_seed2_fine_tune_training_curves.png}
 \caption{resnet18 3class seed2 fine tune training curves}
@@ -1115,21 +1116,21 @@ For completeness, this subsection collects every remaining figure produced by th
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[ht]
+\begin{figure}[h]
 \centering
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.40\textwidth}
 \includegraphics[width=\textwidth]{resnet18_false_negative_pneumonia_person154_bacteria_7.png}
 \caption{resnet18 false negative pneumonia person154 bacteria 7}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.40\textwidth}
 \includegraphics[width=\textwidth]{resnet18_false_positive_normal_IM-0006-0001.png}
 \caption{resnet18 false positive normal IM-0006-0001}
-\end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\end{subfigure}\\[0.6em]
+\begin{subfigure}{0.40\textwidth}
 \includegraphics[width=\textwidth]{resnet18_true_negative_normal_IM-0001-0001.png}
 \caption{resnet18 true negative normal IM-0001-0001}
 \end{subfigure}\hfill
-\begin{subfigure}{0.31\textwidth}
+\begin{subfigure}{0.40\textwidth}
 \includegraphics[width=\textwidth]{resnet18_true_positive_pneumonia_person100_bacteria_4.png}
 \caption{resnet18 true positive pneumonia person100 bacteria 4}
 \end{subfigure}
@@ -1138,7 +1139,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[ht]
+\begin{figure}[h]
 \centering
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_wrong_VIRUS_as_BACTERIA_person10_virus_35.png}
@@ -1151,7 +1152,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_correct_NORMAL_IM-0001-0001.png}
 \caption{resnet18 3class correct NORMAL IM-0001-0001}
-\end{subfigure}\hfill
+\end{subfigure}\\[0.6em]
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_wrong_BACTERIA_as_VIRUS_person110_bacteria_5.png}
 \caption{resnet18 3class wrong BACTERIA as VIRUS person110 bacteria 5}
@@ -1163,7 +1164,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_wrong_NORMAL_as_VIRUS_IM-0015-0001.png}
 \caption{resnet18 3class wrong NORMAL as VIRUS IM-0015-0001}
-\end{subfigure}\hfill
+\end{subfigure}\\[0.6em]
 \begin{subfigure}{0.31\textwidth}
 \includegraphics[width=\textwidth]{resnet18_3class_wrong_VIRUS_as_BACTERIA_person10_virus_35.png}
 \caption{resnet18 3class wrong VIRUS as BACTERIA person10 virus 35}
@@ -1173,7 +1174,7 @@ For completeness, this subsection collects every remaining figure produced by th
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[ht]
+\begin{figure}[h]
 \centering
 \begin{subfigure}{0.46\textwidth}
 \includegraphics[width=\textwidth]{densenet121_flat_vs_hierarchical_confusion.png}
