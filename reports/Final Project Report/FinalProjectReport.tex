@@ -26,7 +26,7 @@
 \renewcommand\UrlFont{\color{blue}\rmfamily}
 \urlstyle{rm}
 %
-\graphicspath{{../../results/figures/}{../../results/gradcam/}}
+\graphicspath{{../../results/figures/}{../../results/gradcam/}{./}}
 %
 % Allow a little extra inter-word stretch to avoid overfull lines caused by
 % long hyphenated compounds and \texttt{} tokens, and give hyphenation hints.
@@ -94,10 +94,10 @@ visual explanations that verify the models attend to clinically plausible
 lung regions. On the binary task the ensemble reaches an accuracy of
 $0.856$, an F1 of $0.896$, and an AUROC of $0.963$ with $99.7\%$ recall
 on pneumonia (only $1$ of $390$ cases missed). On the harder three-class
-task the ensemble achieves an accuracy of $0.817$ and a macro-F1 of
-$0.804$, with per-class F1 scores of $0.77$ (NORMAL), $0.91$ (BACTERIA),
-and $0.72$ (VIRUS), confirming that viral pneumonia is the most difficult
-class to recognise. All experiments are reproducible across three seeds and
+task, evaluated with a leakage-free patient-aware split, the ensemble
+achieves an accuracy of $0.822$ and a macro-F1 of $0.808$, with per-class
+F1 scores of $0.78$ (NORMAL), $0.92$ (BACTERIA), and $0.72$ (VIRUS),
+confirming that viral pneumonia is the most difficult class to recognise. All experiments are reproducible across three seeds and
 are released as an open, documented code repository.
 
 \keywords{Pneumonia classification \and Chest X-ray \and Transfer
@@ -166,7 +166,7 @@ ImageNet-pretrained networks for medical image classification, a strategy
 that remains a standard and competitive baseline.
 
 Transfer learning is particularly attractive in the medical domain because
-labelled data is limited: features learned on ImageNet~\cite{ref_imagenet}
+labelled data is limited: deep features learned on ImageNet~\cite{ref_imagenet,ref_alexnet}
 transfer well to CXRs, and only the classifier head (and optionally the
 deeper layers) needs to be retrained~\cite{ref_kermany,ref_chexnet}. This
 approach has been applied repeatedly to pneumonia detection on the Kermany
@@ -267,9 +267,35 @@ $32\!\to\!64\!\to\!128$. A global average-pooling layer, dropout
 trained from scratch and serves as a lower-bound reference.
 
 \textbf{ResNet18}~\cite{ref_resnet} and \textbf{DenseNet121}~\cite{ref_densenet}.
-Two standard ImageNet-pretrained backbones. We replace the final
-classification layer with a new linear head sized for the task (one output
-for binary, three for the three-class task) and apply transfer learning.
+Two standard ImageNet-pretrained backbones (see also the accessible
+overviews in~\cite{ref_vizuara_resnet,ref_vizuara_densenet}). We replace the
+final classification layer with a new linear head sized for the task (one
+output for binary, three for the three-class task) and apply transfer learning.
+
+The two backbones differ in how they reuse features
+(Fig.~\ref{fig:architectures}). ResNet uses \emph{residual} (skip)
+connections that add a block's input to its output ($x + F(x)$), easing
+gradient flow in deep networks; DenseNet instead \emph{concatenates} each
+layer's output with all preceding feature maps, maximising feature reuse with
+fewer parameters.
+
+\begin{figure}[t]
+\centering
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\textwidth]{resnet-explanation.png}
+\caption{ResNet: residual (skip) connections.}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\textwidth]{densenet-explanation.png}
+\caption{DenseNet: dense (concatenating) blocks.}
+\end{subfigure}
+\caption{Conceptual illustration of the two transfer-learning backbones.
+(a) ResNet adds a block's input to its output via skip connections (the image
+restoration example is illustrative only). (b) DenseNet concatenates each
+layer's output with all earlier feature maps. Figures adapted from the Vizuara
+explainers~\cite{ref_vizuara_resnet,ref_vizuara_densenet}.}
+\label{fig:architectures}
+\end{figure}
 
 \subsection{Training Protocol}
 
@@ -420,10 +446,23 @@ alarm, but it does indicate room for improvement on the NORMAL class.
 Table~\ref{tab:threeclass} reports the three-class results and
 Fig.~\ref{fig:metric3class} visualises them. As expected, separating
 bacterial from viral pneumonia is substantially harder than the binary
-task. DenseNet121 again outperforms ResNet18 (accuracy $0.814$ vs.\
-$0.769$; macro-F1 $0.801$ vs.\ $0.755$), and the ensemble gives a further
-small improvement, reaching an accuracy of $0.817$, a macro-F1 of $0.804$,
-and a one-vs-rest AUROC of $0.961$.
+task. To obtain trustworthy estimates we use a \emph{patient-aware}
+stratified validation split: because the Kermany dataset contains several
+images per patient, an image-level split leaks the same patient across
+train and validation and inflates the reported scores. Holding out whole
+patients instead, together with inverse-frequency class weights and
+checkpoint selection by macro-F1, yields a more conservative but honest
+DenseNet121 macro-F1 of $0.784$ (vs.\ ResNet18 $0.751$). The ensemble of
+both backbones gives the best result, reaching an accuracy of $0.822$, a
+macro-F1 of $0.808$, and a one-vs-rest AUROC of $0.960$.
+
+We also evaluated a \emph{hierarchical} two-stage variant inspired by
+Kermany et al.~\cite{ref_kermany}, in which the binary NORMAL-vs-PNEUMONIA
+model is followed by a dedicated bacteria-vs-virus classifier trained only
+on pneumonia images. This did not outperform the flat three-way softmax
+(macro-F1 $0.774$ vs.\ $0.784$; AUROC $0.944$ for both), confirming that the
+viral/bacterial boundary -- not the pipeline structure -- is the intrinsic
+bottleneck.
 
 \begin{table}[!ht]
 \caption{Three-class classification (NORMAL / BACTERIA / VIRUS) on the
@@ -438,9 +477,10 @@ deterministic for the ensemble. Macro-averaged metrics. Best in
 \toprule
 Model & Acc. & Prec.$_\text{M}$ & Recall$_\text{M}$ & F1$_\text{M}$ & AUROC \\
 \midrule
-ResNet18    & $0.769\pm0.005$ & $0.800\pm0.011$ & $0.776\pm0.008$ & $0.755\pm0.002$ & $0.933\pm0.016$ \\
-DenseNet121 & $0.814\pm0.029$ & $0.823\pm0.023$ & $0.817\pm0.030$ & $0.801\pm0.032$ & $0.956\pm0.006$ \\
-\textbf{Ensemble} & \textbf{0.817} & \textbf{0.826} & \textbf{0.820} & \textbf{0.804} & \textbf{0.961} \\
+ResNet18    & $0.769\pm0.089$ & $0.805\pm0.037$ & $0.777\pm0.077$ & $0.751\pm0.099$ & $0.944\pm0.019$ \\
+DenseNet121 & $0.799\pm0.029$ & $0.808\pm0.024$ & $0.796\pm0.033$ & $0.784\pm0.033$ & $0.944\pm0.012$ \\
+DenseNet121 (hierarchical) & $0.790\pm0.019$ & $0.808\pm0.010$ & $0.794\pm0.016$ & $0.774\pm0.021$ & $0.944\pm0.002$ \\
+\textbf{Ensemble} & \textbf{0.822} & \textbf{0.831} & \textbf{0.824} & \textbf{0.808} & \textbf{0.960} \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -458,7 +498,7 @@ DenseNet121 & $0.814\pm0.029$ & $0.823\pm0.023$ & $0.817\pm0.030$ & $0.801\pm0.0
 \label{fig:cm3class}
 \end{subfigure}
 \caption{Three-class results. (a) DenseNet121 and the ensemble dominate
-ResNet18 on every macro-averaged metric. (b) The dominant error is $70$
+ResNet18 on every macro-averaged metric. (b) The dominant error is $72$
 NORMAL images predicted as VIRUS; BACTERIA is recognised almost perfectly.}
 \label{fig:threeclass}
 \end{figure}
@@ -479,25 +519,25 @@ stand out.
 \toprule
 Class & Precision & Recall & F1 & Support \\
 \midrule
-NORMAL   & 0.987 & 0.637 & 0.774 & 234 \\
-BACTERIA & 0.864 & 0.971 & 0.914 & 242 \\
-VIRUS    & 0.627 & 0.851 & 0.722 & 148 \\
+NORMAL   & 0.993 & 0.645 & 0.782 & 234 \\
+BACTERIA & 0.877 & 0.975 & 0.924 & 242 \\
+VIRUS    & 0.621 & 0.851 & 0.718 & 148 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 First, \textbf{bacterial pneumonia is recognised very reliably}
-(F1 $0.914$, recall $0.971$): it is the majority class and the most
+(F1 $0.924$, recall $0.975$): it is the majority class and the most
 visually distinctive, producing dense, lobar consolidation. Second,
-\textbf{viral pneumonia is the hardest class} (F1 $0.722$): its diffuse,
+\textbf{viral pneumonia is the hardest class} (F1 $0.718$): its diffuse,
 interstitial pattern is easily confused with both normal lungs and early
-bacterial infiltrates, which is reflected in its low precision ($0.627$).
+bacterial infiltrates, which is reflected in its low precision ($0.621$).
 Third, and most striking, \textbf{the dominant error mode is the
-NORMAL$\rightarrow$VIRUS confusion}: $70$ of the $234$ NORMAL images are
-predicted as VIRUS, which is precisely why NORMAL recall ($0.637$) is the
+NORMAL$\rightarrow$VIRUS confusion}: $72$ of the $234$ NORMAL images are
+predicted as VIRUS, which is precisely why NORMAL recall ($0.645$) is the
 lowest of the three classes even though NORMAL precision is the highest
-($0.987$). In other words, the model almost never calls a sick lung normal
-(only $2$ BACTERIA and $0$ VIRUS images are misread as NORMAL), but it
+($0.993$). In other words, the model almost never calls a sick lung normal
+(only $1$ BACTERIA and $0$ VIRUS images are misread as NORMAL), but it
 sometimes reads a faint normal lung as viral pneumonia---a conservative,
 screening-friendly direction of error. This mirrors the known clinical
 difficulty of distinguishing subtle viral infiltrates from normal vascular
@@ -582,19 +622,19 @@ identified in Table~\ref{tab:perclass}.
 \begin{figure}[t]
 \centering
 \begin{subfigure}{0.24\textwidth}
-\includegraphics[width=\textwidth]{densenet121_tp_pneumonia_person100_bacteria_4.png}
+\includegraphics[width=\textwidth]{densenet121_true_positive_pneumonia_person100_bacteria_4.png}
 \caption{TP (pneumonia)}
 \end{subfigure}\hfill
 \begin{subfigure}{0.24\textwidth}
-\includegraphics[width=\textwidth]{densenet121_tn_normal_IM-0001-0001.png}
+\includegraphics[width=\textwidth]{densenet121_true_negative_normal_IM-0001-0001.png}
 \caption{TN (normal)}
 \end{subfigure}\hfill
 \begin{subfigure}{0.24\textwidth}
-\includegraphics[width=\textwidth]{densenet121_fp_IM-0019-0001.png}
+\includegraphics[width=\textwidth]{densenet121_false_positive_normal_IM-0019-0001.png}
 \caption{FP}
 \end{subfigure}\hfill
 \begin{subfigure}{0.24\textwidth}
-\includegraphics[width=\textwidth]{densenet121_fn_person154_bacteria_7.png}
+\includegraphics[width=\textwidth]{densenet121_false_negative_pneumonia_person154_bacteria_7.png}
 \caption{FN}
 \end{subfigure}
 \caption{Binary Grad-CAM overlays (DenseNet121) for the four outcome types.
@@ -610,16 +650,18 @@ FN illustrate the failure modes behind the imperfect specificity.}
 \caption{Correct: BACTERIA}
 \end{subfigure}\hfill
 \begin{subfigure}{0.32\textwidth}
-\includegraphics[width=\textwidth]{densenet121_3class_correct_VIRUS_person10_virus_35.png}
-\caption{Correct: VIRUS}
+\includegraphics[width=\textwidth]{densenet121_3class_correct_NORMAL_IM-0001-0001.png}
+\caption{Correct: NORMAL}
 \end{subfigure}\hfill
 \begin{subfigure}{0.32\textwidth}
 \includegraphics[width=\textwidth]{densenet121_3class_wrong_NORMAL_as_VIRUS_IM-0015-0001.png}
 \caption{Error: NORMAL as VIRUS}
 \end{subfigure}
 \caption{Three-class Grad-CAM overlays (DenseNet121). Correct predictions
-focus on the affected lung fields; the failure case shows diffuse
-activation over normal lungs.}
+(BACTERIA, NORMAL) focus on the relevant regions; the failure case shows a
+normal lung misread as viral pneumonia (diffuse activation), the dominant
+NORMAL$\rightarrow$VIRUS error. The model produces no clean correctly-classified
+VIRUS example, consistent with viral pneumonia being the hardest class.}
 \label{fig:gradcam3}
 \end{figure}
 
@@ -662,8 +704,11 @@ clinically motivated three-class extension that distinguishes bacterial
 from viral pneumonia. Transfer-learning backbones, and especially a simple
 ensemble of ResNet18 and DenseNet121, gave the best results: an F1 of
 $0.896$ and $99.7\%$ pneumonia recall on the binary task, and a macro-F1 of
-$0.804$ on the three-class task. Calibration, threshold optimisation, and
-Grad-CAM analyses added interpretability and operational flexibility.
+$0.808$ on the three-class task (evaluated with a leakage-free patient-aware
+split). A hierarchical two-stage variant did not improve on the flat
+softmax, indicating that the viral/bacterial distinction is an intrinsic
+limit rather than a modelling artefact. Calibration, threshold optimisation,
+and Grad-CAM analyses added interpretability and operational flexibility.
 
 Future work includes addressing class imbalance with weighted losses or
 focal loss~\cite{ref_focal}, temperature scaling~\cite{ref_calibration} to
@@ -702,7 +747,8 @@ medical diagnoses and treatable diseases by image-based deep learning.
 Cell \textbf{172}(5), 1122--1131 (2018). \doi{10.1016/j.cell.2018.02.010}
 
 \bibitem{ref_kaggle}
-Kermany, D.S., Zhang, K., Goldbaum, M.: Chest X-Ray Images (Pneumonia).
+Mooney, P.: Chest X-Ray Images (Pneumonia). Kaggle (2018). Original data from
+Kermany et al. (2018).
 \url{https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia},
 last accessed 2026-03-29
 
@@ -766,6 +812,12 @@ Deng, J., Dong, W., Socher, R., Li, L.-J., Li, K., Fei-Fei, L.: ImageNet: A
 large-scale hierarchical image database. In: IEEE CVPR, pp. 248--255
 (2009). \doi{10.1109/CVPR.2009.5206848}
 
+\bibitem{ref_alexnet}
+Krizhevsky, A., Sutskever, I., Hinton, G.E.: ImageNet classification with
+deep convolutional neural networks. In: Advances in Neural Information
+Processing Systems (NeurIPS), vol.~25, pp. 1097--1105 (2012).
+\doi{10.1145/3065386}
+
 \bibitem{ref_pytorch}
 Paszke, A., Gross, S., Massa, F., et al.: PyTorch: An imperative style,
 high-performance deep learning library. In: NeurIPS, pp. 8024--8035 (2019)
@@ -773,6 +825,16 @@ high-performance deep learning library. In: NeurIPS, pp. 8024--8035 (2019)
 \bibitem{ref_scikit}
 Pedregosa, F., et al.: Scikit-learn: Machine learning in Python. Journal of
 Machine Learning Research \textbf{12}, 2825--2830 (2011)
+
+\bibitem{ref_vizuara_resnet}
+Vizuara: ResNet --- The architecture that changed machine learning forever.
+Vizuara Newsletter (2024).
+\url{https://www.vizuaranewsletter.com/p/resnet-the-architecture-that-changed}
+
+\bibitem{ref_vizuara_densenet}
+Vizuara: DenseNet and EfficientNet are 1/20th the size of VGG16. Vizuara
+Newsletter (2024).
+\url{https://www.vizuaranewsletter.com/p/densenet-and-efficientnet-are-120th}
 \end{thebibliography}
 
 %
@@ -858,11 +920,11 @@ misread as BACTERIA).
 \caption{Correct: NORMAL}
 \end{subfigure}\hfill
 \begin{subfigure}{0.32\textwidth}
-\includegraphics[width=\textwidth]{densenet121_3class_wrong_BACTERIA_as_VIRUS_person102_bacteria_4.png}
+\includegraphics[width=\textwidth]{densenet121_3class_wrong_BACTERIA_as_VIRUS_person117_bacteria_5.png}
 \caption{Error: BACTERIA as VIRUS}
 \end{subfigure}\hfill
 \begin{subfigure}{0.32\textwidth}
-\includegraphics[width=\textwidth]{densenet121_3class_wrong_NORMAL_as_BACTERIA_IM-0011-0001-0002.png}
+\includegraphics[width=\textwidth]{densenet121_3class_wrong_NORMAL_as_BACTERIA_IM-0022-0001.png}
 \caption{Error: NORMAL as BACTERIA}
 \end{subfigure}
 \caption{Additional three-class Grad-CAM overlays (DenseNet121).}
