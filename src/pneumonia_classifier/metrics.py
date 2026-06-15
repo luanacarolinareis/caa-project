@@ -1,9 +1,7 @@
 """Metrics for pneumonia classification (binary and multi-class)."""
 
 from __future__ import annotations
-
 from typing import Any
-
 import numpy as np
 from sklearn.metrics import (
     accuracy_score,

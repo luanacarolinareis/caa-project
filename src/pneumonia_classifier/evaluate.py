@@ -1,14 +1,11 @@
 """Evaluation helpers for trained checkpoints."""
 
 from __future__ import annotations
-
 import time
 from pathlib import Path
 from typing import Any
-
 import torch
 from torch.utils.data import DataLoader
-
 from pneumonia_classifier.config import is_three_class
 from pneumonia_classifier.metrics import compute_binary_metrics, compute_multiclass_metrics
 from pneumonia_classifier.utils import save_json
