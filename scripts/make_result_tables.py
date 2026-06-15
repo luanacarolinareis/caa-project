@@ -20,6 +20,11 @@ METRICS_DIR = Path("results/metrics")
 MODELS = ["custom_cnn", "resnet18", "densenet121"]
 ENSEMBLE_MODEL = "ensemble_resnet18_densenet121"
 SEEDS = [0, 1, 2]
+# Extra per-seed models that only exist for the three-class task. Their JSON
+# files are named "<name>_seed<seed>.json" (no _3class suffix), so they are
+# loaded separately. This lets the hierarchical two-stage approach appear as
+# its own row in the 3-class comparison table
+THREE_CLASS_EXTRA_MODELS = ["densenet121_hierarchical"]
 
 BINARY_METRICS = ["accuracy", "precision", "recall", "specificity", "f1", "auroc", "inference_time_ms_per_image"]
 THREE_CLASS_METRICS = ["accuracy", "precision_macro", "recall_macro", "f1_macro", "auroc", "inference_time_ms_per_image"]
@@ -59,6 +64,24 @@ def load_seed_metrics(task: str) -> list[dict]:
                     row[f"f1_{cls_name}"] = f1_val
 
             rows.append(row)
+
+    # Three-class extra models (e.g. hierarchical) live in "<name>_seed<seed>.json"
+    # without the _3class suffix
+    if task == "three_class":
+        for model in THREE_CLASS_EXTRA_MODELS:
+            for seed in SEEDS:
+                path = METRICS_DIR / f"{model}_seed{seed}.json"
+                if not path.exists():
+                    continue
+                with path.open() as f:
+                    data = json.load(f)
+                row = {"model": model, "seed": seed}
+                for m in metrics_list:
+                    row[m] = data.get(m)
+                if "f1_per_class" in data:
+                    for cls_name, f1_val in data["f1_per_class"].items():
+                        row[f"f1_{cls_name}"] = f1_val
+                rows.append(row)
 
     # Include ensemble result if available (single JSON, no seeds)
     ensemble_path = METRICS_DIR / f"{ENSEMBLE_MODEL}{suffix}.json"
@@ -107,8 +130,15 @@ def build_summary(rows: list[dict], task: str) -> pd.DataFrame:
         ens_row.update({f"{m}_std": float("nan") for m in numeric})
         agg.loc[ENSEMBLE_MODEL] = ens_row
 
-    all_models = MODELS + ([ENSEMBLE_MODEL] if ENSEMBLE_MODEL in agg.index else [])
-    return agg.reindex(all_models)
+    # Preserve a sensible order: base models, extra (hierarchical) models, ensemble
+    ordered = (
+        MODELS
+        + [m for m in THREE_CLASS_EXTRA_MODELS if m in agg.index]
+        + ([ENSEMBLE_MODEL] if ENSEMBLE_MODEL in agg.index else [])
+    )
+    # Keep only models actually present, without dropping any unexpected ones.
+    ordered = [m for m in ordered if m in agg.index] + [m for m in agg.index if m not in ordered]
+    return agg.reindex(ordered)
 
 
 def format_markdown(summary: pd.DataFrame, task: str) -> str:

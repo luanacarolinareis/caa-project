@@ -14,7 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from pneumonia_classifier.config import load_config, merge_config, get_num_classes
-from pneumonia_classifier.data import get_three_class_dataloaders
+from pneumonia_classifier.data import get_three_class_dataloaders, compute_class_weights
 from pneumonia_classifier.models.transfer_learning import (
     build_model,
     freeze_backbone,
@@ -85,6 +85,12 @@ def main() -> None:
             counts = ds.get_class_counts()
             print(f"  {split_name}: {counts}")
 
+    # Inverse-frequency class weights computed from the (resplit) training set
+    class_weights = compute_class_weights(dataloaders["train"].dataset)
+    if config["training"].get("use_class_weights", False):
+        print(f"Class weights: {[round(w, 3) for w in class_weights]}")
+    print(f"Selection   : {config['training'].get('select_by', 'loss')}")
+
     print(f"\nModel instantiated: {args.model} (num_classes={num_classes})")
     print(f"Device      : {device}")
 
@@ -108,6 +114,7 @@ def main() -> None:
         checkpoint_path=checkpoint_path,
         history_path=head_history_path,
         phase="head_only",
+        class_weights=class_weights,
     )
 
     # Phase 2: full fine-tuning
@@ -130,6 +137,7 @@ def main() -> None:
         checkpoint_path=checkpoint_path,
         history_path=fine_history_path,
         phase="fine_tune",
+        class_weights=class_weights,
     )
 
     print(f"\nSaved checkpoint: {checkpoint_path}")

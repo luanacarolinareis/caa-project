@@ -111,12 +111,17 @@ def _pick_images_three_class(
 
 
 def _output_filename_binary(model_name: str, category: str, img_path: Path) -> str:
+    # The class word is the ACTUAL (true) class of the image:
+    #   true_positive  -> model said pneumonia, was pneumonia
+    #   true_negative  -> model said normal,    was normal
+    #   false_positive -> model said pneumonia, was actually normal
+    #   false_negative -> model said normal,    was actually pneumonia
     stem = img_path.stem[:20]
     label_map = {
-        "tp": f"{model_name}_tp_pneumonia_{stem}.png",
-        "tn": f"{model_name}_tn_normal_{stem}.png",
-        "fp": f"{model_name}_fp_{stem}.png",
-        "fn": f"{model_name}_fn_{stem}.png",
+        "tp": f"{model_name}_true_positive_pneumonia_{stem}.png",
+        "tn": f"{model_name}_true_negative_normal_{stem}.png",
+        "fp": f"{model_name}_false_positive_normal_{stem}.png",
+        "fn": f"{model_name}_false_negative_pneumonia_{stem}.png",
     }
     return label_map[category]
 
@@ -156,6 +161,19 @@ def main() -> None:
     model.eval()
 
     target_layer = get_gradcam_target_layer(model)
+
+    # Clean up stale overlays from previous runs of THIS model+task. Because the
+    # filename embeds the example image (which changes when the model is
+    # retrained), old files are otherwise never overwritten and accumulate,
+    # producing duplicate/contradictory examples in the grids. We only do this
+    # for the auto-selected mode (not for an explicit --image-path)
+    if not args.image_path and output_dir.exists():
+        prefix = f"{args.model}_3class_" if three_class else f"{args.model}_"
+        for old in output_dir.glob(f"{prefix}*.png"):
+            # For the binary task, never delete the 3-class overlays.
+            if not three_class and "_3class_" in old.name:
+                continue
+            old.unlink()
 
     if args.image_path:
         img_path = Path(args.image_path)
