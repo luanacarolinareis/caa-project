@@ -370,17 +370,7 @@ We want to be transparent about the boundaries of this work. On the bias side: d
 \timing{$\sim$30 s}
 
 \carol{Slide 21 — Conclusions}{
-To summarise what we built and what we found.
-
-Our \textbf{binary ensemble} achieves F1 of 0.896, recall of 0.997, and AUROC of 0.963 --- missing only 1 pneumonia case out of 390. Transfer learning substantially outperforms training from scratch across every metric, while inference cost is identical at roughly 13 to 15 milliseconds.
-
-Our \textbf{three-class innovation} reaches macro-F1 of 0.808 and AUROC of 0.960 on a leakage-free patient-aware split --- demonstrating that the aetiology signal encoded in the filenames is genuinely learnable with the same lightweight architecture.
-
-The \textbf{hierarchical classifier} does not beat the flat softmax, which tells us the Virus bottleneck is a data-level problem, not a modelling one.
-
-Grad-CAM confirms that both transfer learning models attend to clinically plausible lung regions, and the three-class ensemble achieves the best calibration of all models at ECE approximately 0.05.
-
-For future work, the clearest directions are: addressing class imbalance with weighted or focal loss, temperature scaling for calibration, multi-institution and adult datasets, severity grading, and eventually prospective clinical evaluation. Thank you.
+To summarise: DenseNet121 is our best model, achieving AUROC of 0.966, recall of 0.997, and F1 of 0.887. Transfer learning substantially outperforms training from scratch across all metrics. All three success criteria were met. The ensemble misses just one pneumonia case out of 390, and inference cost is identical across all models at roughly 13 to 15 milliseconds. For future work, we see clear paths toward multi-institution and adult datasets, severity grading, better handling of class imbalance through weighted or focal loss, temperature scaling for calibration, and eventually prospective clinical evaluation. Thank you.
 }
 
 \vspace{0.4em}
