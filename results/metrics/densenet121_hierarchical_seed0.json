@@ -1,0 +1,46 @@
+{
+  "accuracy": 0.7996794871794872,
+  "precision_macro": 0.8139016246520833,
+  "recall_macro": 0.8041506223324405,
+  "f1_macro": 0.785480803464298,
+  "precision_per_class": {
+    "NORMAL": 0.9859154929577465,
+    "BACTERIA": 0.8411552346570397,
+    "VIRUS": 0.6146341463414634
+  },
+  "recall_per_class": {
+    "NORMAL": 0.5982905982905983,
+    "BACTERIA": 0.9628099173553719,
+    "VIRUS": 0.8513513513513513
+  },
+  "f1_per_class": {
+    "NORMAL": 0.7446808510638298,
+    "BACTERIA": 0.8978805394990366,
+    "VIRUS": 0.7138810198300283
+  },
+  "confusion_matrix": [
+    [
+      140,
+      23,
+      71
+    ],
+    [
+      1,
+      233,
+      8
+    ],
+    [
+      1,
+      21,
+      126
+    ]
+  ],
+  "auroc": 0.9457858949383221,
+  "model": "densenet121_hierarchical",
+  "seed": 0,
+  "approach": "hierarchical",
+  "stage_a_checkpoint": "results\\checkpoints\\densenet121_seed0.pt",
+  "stage_b_checkpoint": "results\\checkpoints\\densenet121_bactvirus_seed0.pt",
+  "num_test_images": 624,
+  "inference_time_ms_per_image": 16.998926602564797
+}
