@@ -156,7 +156,7 @@ Good morning, everyone. Today we're presenting our work on pneumonia classificat
 \timing{$\sim$20 s}
 
 \jakub{Slide 2 — Table of Contents}{
-Let me quickly walk you through the structure of our presentation. We'll start with the Outline, then move into Motivation and the clinical problem, the Dataset, Preprocessing, and the Pipeline and Model Architectures. From there we'll cover the Training Setup and then hand over to Carolina for the results --- Quantitative Results, a Visual Comparison of the models, and the Training Curves for our best model, DenseNet121. The next slide shows topics ten through eighteen.
+Let me quickly walk you through the structure of our presentation. We'll start with the Outline, then move into Motivation and the clinical problem, the Dataset, Preprocessing, and the Pipeline and Model Architectures. From there we'll cover the Training Setup and then hand over to Carolina for the results --- Quantitative Results, a Visual Comparison of the models, and the Training Curves for our best model, DenseNet121.
 }
 
 \vspace{0.4em}
@@ -240,7 +240,7 @@ All models shared the same hyperparameter configuration: Adam optimizer with a l
 \timing{$\sim$45 s}
 
 \carol{Slide 10 — Quantitative Results}{
-Thank you, Jakub. Here are the core results across three seeds. DenseNet121 achieves a recall of 0.997 --- meaning it missed only 1 to 2 pneumonia cases per run out of 390. Its AUROC of 0.966 actually exceeds the CheXNet-14 reference of 0.927. Recall was our primary success criterion, and all three models exceed 0.90 --- but the transfer learning models are clearly superior. The custom CNN shows high variance, especially in specificity, reflecting the instability of training from scratch. And importantly, inference time is essentially identical across all three models at around 13 to 15 milliseconds per image --- meaning there is no computational cost to choosing the better model.
+Here are the core results across three seeds. DenseNet121 achieves a recall of 0.997 --- meaning it missed only 1 to 2 pneumonia cases per run out of 390. Its AUROC of 0.966 actually exceeds the CheXNet-14 reference of 0.927. Recall was our primary success criterion, and all three models exceed 0.90 --- but the transfer learning models are clearly superior. The custom CNN shows high variance, especially in specificity, reflecting the instability of training from scratch. And importantly, inference time is essentially identical across all three models at around 13 to 15 milliseconds per image --- meaning there is no computational cost to choosing the better model.
 }
 
 \vspace{0.4em}
@@ -294,7 +294,7 @@ DenseNet121 achieves 0.799 accuracy and 0.784 macro-F1 on this harder task. The 
 \timing{$\sim$40 s}
 
 \carol{Slide 15 — Innovation II: Hierarchical Two-Stage Classifier}{
-Our second innovation is a hierarchical two-stage classifier, motivated by the original Kermany et al.\ 2018 paper --- which, remarkably, \textbf{never trained a flat three-way classifier}, but rather used two separate binary classifiers. We replicate that design philosophy and compare it head-to-head with our flat softmax approach.
+Our second innovation is a hierarchical two-stage classifier, motivated by the original Kermany paper --- which, remarkably, \textbf{never trained a flat three-way classifier}, but rather used two separate binary classifiers. We replicate that design philosophy and compare it head-to-head with our flat softmax approach.
 
 The architecture is shown in the diagram. Stage A is the binary DenseNet121 classifier we already trained: it decides Normal versus Pneumonia. If the output is Pneumonia, the image is passed to Stage B --- a separate DenseNet121 trained only on pneumonia cases, which decides Bacteria versus Virus. Normal cases never reach Stage B.
 
@@ -385,9 +385,8 @@ To summarise: DenseNet121 is our best model, achieving AUROC of 0.966, recall of
 % ------ SLIDE 25 ------
 \slidetag{25 — Thank You}
 
-\carol{Slide 25 — Thank You}{
-Thank you very much. We are happy to take your questions.
-}
+\noindent\textit{[Skip --- thank you slide is displayed but not read aloud. If asked, you can point to the slide number.]}
+
 
 \noindent\rule{\linewidth}{1.2pt}
 
