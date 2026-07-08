@@ -1,3 +1,5 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/vfAwOX_j)
+
 # Pneumonia Classification from Pediatric Chest X-Rays
 
 This project trains and evaluates deep learning models for pneumonia classification from pediatric chest X-ray images. It covers two tasks: binary classification (NORMAL vs PNEUMONIA) as a baseline, and a three-class extension (NORMAL vs BACTERIAL PNEUMONIA vs VIRAL PNEUMONIA) as the main innovation. Models compared include a custom CNN baseline, ResNet18, and DenseNet121, evaluated with classification metrics, inference time, Grad-CAM visual explanations, calibration analysis, ensembling, and a hierarchical two-stage variant.
