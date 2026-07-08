@@ -15,5 +15,5 @@
   "model": "custom_cnn",
   "seed": 2,
   "num_test_images": 624,
-  "inference_time_ms_per_image": 13.816954487176703
+  "inference_time_ms_per_image": 12.663121314103476
 }

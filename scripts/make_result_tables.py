@@ -18,7 +18,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 METRICS_DIR = Path("results/metrics")
 MODELS = ["custom_cnn", "resnet18", "densenet121"]
+ENSEMBLE_MODEL = "ensemble_resnet18_densenet121"
 SEEDS = [0, 1, 2]
+# Extra per-seed models that only exist for the three-class task. Their JSON
+# files are named "<name>_seed<seed>.json" (no _3class suffix), so they are
+# loaded separately. This lets the hierarchical two-stage approach appear as
+# its own row in the 3-class comparison table
+THREE_CLASS_EXTRA_MODELS = ["densenet121_hierarchical"]
 
 BINARY_METRICS = ["accuracy", "precision", "recall", "specificity", "f1", "auroc", "inference_time_ms_per_image"]
 THREE_CLASS_METRICS = ["accuracy", "precision_macro", "recall_macro", "f1_macro", "auroc", "inference_time_ms_per_image"]
@@ -58,6 +64,38 @@ def load_seed_metrics(task: str) -> list[dict]:
                     row[f"f1_{cls_name}"] = f1_val
 
             rows.append(row)
+
+    # Three-class extra models (e.g. hierarchical) live in "<name>_seed<seed>.json"
+    # without the _3class suffix
+    if task == "three_class":
+        for model in THREE_CLASS_EXTRA_MODELS:
+            for seed in SEEDS:
+                path = METRICS_DIR / f"{model}_seed{seed}.json"
+                if not path.exists():
+                    continue
+                with path.open() as f:
+                    data = json.load(f)
+                row = {"model": model, "seed": seed}
+                for m in metrics_list:
+                    row[m] = data.get(m)
+                if "f1_per_class" in data:
+                    for cls_name, f1_val in data["f1_per_class"].items():
+                        row[f"f1_{cls_name}"] = f1_val
+                rows.append(row)
+
+    # Include ensemble result if available (single JSON, no seeds)
+    ensemble_path = METRICS_DIR / f"{ENSEMBLE_MODEL}{suffix}.json"
+    if ensemble_path.exists():
+        with ensemble_path.open() as f:
+            data = json.load(f)
+        row = {"model": ENSEMBLE_MODEL, "seed": None}
+        for m in metrics_list:
+            row[m] = data.get(m)
+        if task == "three_class" and "f1_per_class" in data:
+            for cls_name, f1_val in data["f1_per_class"].items():
+                row[f"f1_{cls_name}"] = f1_val
+        rows.append(row)
+
     return rows
 
 
@@ -73,16 +111,34 @@ def build_summary(rows: list[dict], task: str) -> pd.DataFrame:
                 extra_cols.append(col)
 
     numeric = metrics_list + sorted(extra_cols)
-    # Filter to columns that exist
     numeric = [c for c in numeric if c in df.columns]
 
+    # Separate ensemble row (single entry, no std) from per-seed models
+    ensemble_rows = df[df["model"] == ENSEMBLE_MODEL]
+    seed_rows = df[df["model"] != ENSEMBLE_MODEL]
+
     agg = (
-        df.groupby("model")[numeric]
+        seed_rows.groupby("model")[numeric]
         .agg(["mean", "std"])
         .round(4)
     )
     agg.columns = [f"{metric}_{stat}" for metric, stat in agg.columns]
-    return agg.reindex(MODELS)
+
+    if not ensemble_rows.empty:
+        ens = ensemble_rows[numeric].mean().round(4)
+        ens_row = {f"{m}_mean": ens[m] for m in numeric}
+        ens_row.update({f"{m}_std": float("nan") for m in numeric})
+        agg.loc[ENSEMBLE_MODEL] = ens_row
+
+    # Preserve a sensible order: base models, extra (hierarchical) models, ensemble
+    ordered = (
+        MODELS
+        + [m for m in THREE_CLASS_EXTRA_MODELS if m in agg.index]
+        + ([ENSEMBLE_MODEL] if ENSEMBLE_MODEL in agg.index else [])
+    )
+    # Keep only models actually present, without dropping any unexpected ones.
+    ordered = [m for m in ordered if m in agg.index] + [m for m in agg.index if m not in ordered]
+    return agg.reindex(ordered)
 
 
 def format_markdown(summary: pd.DataFrame, task: str) -> str:
@@ -115,8 +171,13 @@ def format_markdown(summary: pd.DataFrame, task: str) -> str:
     sep = ["---"] + ["---"] * len(display_metrics)
     lines = ["| " + " | ".join(cols) + " |", "| " + " | ".join(sep) + " |"]
 
-    for model in MODELS:
+    all_models = list(summary.index.dropna())
+    for model in all_models:
         if model not in summary.index:
+            continue
+        # Skip rows where all metrics are NaN (e.g. custom_cnn has no 3-class results)
+        mean_cols = [f"{m}_mean" for m in display_metrics if f"{m}_mean" in summary.columns]
+        if mean_cols and summary.loc[model, mean_cols].isna().all():
             continue
         row_vals = [model]
         for m in display_metrics:
@@ -125,7 +186,12 @@ def format_markdown(summary: pd.DataFrame, task: str) -> str:
             if mean_col in summary.columns:
                 mean = summary.loc[model, mean_col]
                 std = summary.loc[model, std_col]
-                row_vals.append(f"{mean:.4f} ± {std:.4f}")
+                if pd.isna(mean):
+                    row_vals.append("—")
+                elif pd.isna(std):
+                    row_vals.append(f"{mean:.4f}")
+                else:
+                    row_vals.append(f"{mean:.4f} ± {std:.4f}")
             else:
                 row_vals.append("—")
         lines.append("| " + " | ".join(row_vals) + " |")

@@ -1,27 +1,39 @@
 """Training engine for baseline and transfer-learning experiments."""
 
 from __future__ import annotations
-
+import sys
 from pathlib import Path
 from typing import Any
-
 import torch
 from torch import nn
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-
 from pneumonia_classifier.config import is_three_class
 from pneumonia_classifier.metrics import compute_binary_metrics, compute_multiclass_metrics
 from pneumonia_classifier.utils import save_checkpoint, save_json
 
 
-def _build_criterion(config: dict[str, Any]) -> nn.Module:
-    """Return the appropriate loss function for the task."""
+def _build_criterion(
+    config: dict[str, Any],
+    device: torch.device | None = None,
+    class_weights: list[float] | None = None,
+) -> nn.Module:
+    """Return the appropriate loss function for the task.
+
+    For the three-class task, ``class_weights`` (inverse-frequency weights)
+    can be supplied to counter class imbalance. They are ignored for the
+    binary task.
+    """
     loss_name = config["training"].get("loss", "bce_with_logits")
     if loss_name == "cross_entropy":
-        return nn.CrossEntropyLoss()
+        weight_tensor = None
+        if class_weights is not None and config["training"].get("use_class_weights", False):
+            weight_tensor = torch.tensor(class_weights, dtype=torch.float32)
+            if device is not None:
+                weight_tensor = weight_tensor.to(device)
+        return nn.CrossEntropyLoss(weight=weight_tensor)
     return nn.BCEWithLogitsLoss()
 
 
@@ -43,7 +55,9 @@ def train_one_epoch(
     y_pred: list[int] = []
     y_prob_all: list = []
 
-    for images, labels in tqdm(dataloader, desc="train", leave=False):
+    # file=sys.stdout: keep the progress bar on stdout so PowerShell does not
+    # render it as a red "error" (tqdm writes to stderr by default).
+    for images, labels in tqdm(dataloader, desc="train", leave=False, file=sys.stdout):
         images = images.to(device)
 
         if three_class:
@@ -97,7 +111,7 @@ def validate(
     y_pred: list[int] = []
     y_prob_all: list = []
 
-    for images, labels in tqdm(dataloader, desc="val", leave=False):
+    for images, labels in tqdm(dataloader, desc="val", leave=False, file=sys.stdout):
         images = images.to(device)
 
         if three_class:
@@ -141,8 +155,14 @@ def train_model(
     checkpoint_path: str | Path,
     history_path: str | Path,
     phase: str = "train",
+    class_weights: list[float] | None = None,
 ) -> dict[str, Any]:
-    criterion = _build_criterion(config)
+    three_class = is_three_class(config)
+    # For multiclass, select the best checkpoint by validation F1-macro: the
+    # held-out val set is small and the loss is noisy, whereas F1-macro tracks
+    # the goal of balancing the minority classes (NORMAL / VIRUS)
+    select_by_f1 = three_class and config["training"].get("select_by", "loss") == "f1_macro"
+    criterion = _build_criterion(config, device=device, class_weights=class_weights)
     optimizer = Adam(
         (param for param in model.parameters() if param.requires_grad),
         lr=config["training"]["learning_rate"],
@@ -160,6 +180,7 @@ def train_model(
 
     model.to(device)
     best_val_loss = float("inf")
+    best_val_score = -float("inf")  # F1-macro when select_by_f1
     best_epoch = 0
     stale_epochs = 0
     history: list[dict[str, Any]] = []
@@ -185,11 +206,19 @@ def train_model(
             f"{phase} epoch {epoch:03d}/{max_epochs} "
             f"train_loss={train_metrics['loss']:.4f} "
             f"val_loss={val_metrics['loss']:.4f} "
-            f"val_f1={val_metrics['f1']:.4f}"
+            f"val_f1={val_metrics.get('f1_macro', val_metrics.get('f1', 0)):.4f}"
         )
 
-        if val_metrics["loss"] < best_val_loss:
-            best_val_loss = val_metrics["loss"]
+        if select_by_f1:
+            current_score = val_metrics.get("f1_macro", 0.0)
+            improved = current_score > best_val_score
+        else:
+            current_score = -val_metrics["loss"]
+            improved = val_metrics["loss"] < best_val_loss
+
+        if improved:
+            best_val_loss = min(best_val_loss, val_metrics["loss"])
+            best_val_score = max(best_val_score, current_score)
             best_epoch = epoch
             stale_epochs = 0
             save_checkpoint(

@@ -1,9 +1,7 @@
 """Metrics for pneumonia classification (binary and multi-class)."""
 
 from __future__ import annotations
-
 from typing import Any
-
 import numpy as np
 from sklearn.metrics import (
     accuracy_score,
@@ -69,9 +67,6 @@ def compute_multiclass_metrics(
             recall_score(labels, predictions, average="macro", zero_division=0)
         ),
         "f1_macro": float(
-            f1_score(labels, predictions, average="macro", zero_division=0)
-        ),
-        "f1": float(
             f1_score(labels, predictions, average="macro", zero_division=0)
         ),
     }

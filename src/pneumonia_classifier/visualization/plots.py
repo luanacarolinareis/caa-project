@@ -122,7 +122,9 @@ def plot_metric_comparison(results: dict[str, dict[str, float]], metrics: list[s
     ax.set_title("Metric comparison across models")
     ax.set_xlabel("Model")
     ax.set_ylabel("Score")
-    ax.set_ylim(0.7, 1.02)
+    # Lower bound adapts to the data so low-valued metrics (e.g. specificity) stay visible instead of being clipped.
+    y_min = float(df.to_numpy().min())
+    ax.set_ylim(max(0.0, min(0.7, y_min - 0.05)), 1.02)
     ax.legend(title="Metric", bbox_to_anchor=(1.01, 1), loc="upper left")
     ax.tick_params(axis="x", rotation=0)
     plt.tight_layout()
@@ -130,7 +132,8 @@ def plot_metric_comparison(results: dict[str, dict[str, float]], metrics: list[s
 
 
 if __name__ == "__main__":
-    out = Path("results/figures")
+    out = Path("results/_demo")
+    print(f"[smoke test] writing example figures to {out} (synthetic data)")
 
     # class distribution
     p = plot_class_distribution(
@@ -148,7 +151,7 @@ if __name__ == "__main__":
          "val_loss": list(np.linspace(0.65, 0.25, n)),
          "train_acc": list(np.linspace(0.6, 0.93, n)),
          "val_acc": list(np.linspace(0.58, 0.90, n))},
-        model_name="densenet121",
+        model_name="example",
         output_dir=out,
     )
     print(f"Saved: {p}")
@@ -156,7 +159,7 @@ if __name__ == "__main__":
     # confusion matrix
     p = plot_confusion_matrix(
         np.array([[210, 24], [18, 372]]),
-        model_name="densenet121",
+        model_name="example",
         output_dir=out,
     )
     print(f"Saved: {p}")

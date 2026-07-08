@@ -56,6 +56,7 @@ def validate_config(config: dict[str, Any]) -> None:
     valid_class_sets = [
         ["NORMAL", "PNEUMONIA"],
         ["NORMAL", "BACTERIA", "VIRUS"],
+        ["BACTERIA", "VIRUS"],  # Stage B of the hierarchical approach
     ]
     if class_names not in valid_class_sets:
         raise ValueError(
@@ -86,10 +87,24 @@ def _deep_update(target: dict[str, Any], updates: dict[str, Any]) -> None:
 
 
 def is_three_class(config: dict[str, Any]) -> bool:
-    """Return True when the config describes a three-class task."""
-    return len(config["data"].get("class_names", [])) == 3
+    """Return True when the task uses a multi-class softmax head.
+
+    Named ``is_three_class`` for backwards compatibility; it now returns True
+    for ANY task whose class set is not the binary NORMAL/PNEUMONIA one (i.e.
+    the 3-class task AND the 2-class bacteria/virus stage), since all of those
+    use a softmax + cross-entropy head rather than the single-logit BCE head.
+    """
+    class_names = config["data"].get("class_names", [])
+    return class_names != ["NORMAL", "PNEUMONIA"] and len(class_names) >= 2
 
 
 def get_num_classes(config: dict[str, Any]) -> int:
-    """Return the number of output classes (1 for binary, 3 for three-class)."""
-    return 3 if is_three_class(config) else 1
+    """Return the number of output logits.
+
+    1 for the binary BCE head (NORMAL vs PNEUMONIA); otherwise the number of
+    classes in the softmax head (2 for bacteria/virus, 3 for the full task).
+    """
+    class_names = config["data"].get("class_names", [])
+    if class_names == ["NORMAL", "PNEUMONIA"]:
+        return 1
+    return len(class_names)

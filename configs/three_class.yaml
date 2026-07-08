@@ -9,6 +9,9 @@ data:
   test_dir: test
   image_size: 224
   num_channels: 3
+  # Fraction of each training class held out as a stratified validation set
+  # The Kaggle val/ folder has only 16 images and no VIRUS, so we resplit
+  val_fraction: 0.12
   class_names:
     - NORMAL
     - BACTERIA
@@ -33,6 +36,12 @@ training:
   learning_rate: 0.0001
   optimizer: adam
   loss: cross_entropy
+  # Counter the train imbalance (BACTERIA ~2x NORMAL/VIRUS) with
+  # inverse-frequency class weights in the cross-entropy loss
+  use_class_weights: true
+  # Select the best checkpoint by validation F1-macro rather than loss:
+  # F1-macro directly tracks balanced performance on the minority classes
+  select_by: f1_macro
   scheduler:
     name: reduce_lr_on_plateau
     factor: 0.5

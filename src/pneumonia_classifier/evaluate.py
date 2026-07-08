@@ -1,14 +1,11 @@
 """Evaluation helpers for trained checkpoints."""
 
 from __future__ import annotations
-
 import time
 from pathlib import Path
 from typing import Any
-
 import torch
 from torch.utils.data import DataLoader
-
 from pneumonia_classifier.config import is_three_class
 from pneumonia_classifier.metrics import compute_binary_metrics, compute_multiclass_metrics
 from pneumonia_classifier.utils import save_json
@@ -100,4 +97,9 @@ def evaluate_model(
         }
     )
     save_json(metrics, output_path)
+
+    # Save raw probabilities alongside metrics for calibration analysis
+    probs_path = Path(output_path).with_name(Path(output_path).stem + "_probs.json")
+    save_json({"y_true": y_true, "y_prob": y_prob, "model": model_name, "seed": seed}, probs_path)
+
     return metrics

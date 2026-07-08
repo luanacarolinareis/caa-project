@@ -15,5 +15,5 @@
   "model": "densenet121",
   "seed": 2,
   "num_test_images": 624,
-  "inference_time_ms_per_image": 14.727270032048741
+  "inference_time_ms_per_image": 15.79679535255962
 }

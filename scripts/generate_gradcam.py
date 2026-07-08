@@ -25,25 +25,13 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from pneumonia_classifier.config import load_config, is_three_class, get_num_classes
-from pneumonia_classifier.data import THREE_CLASS_NAMES, THREE_CLASS_MAP
+from pneumonia_classifier.data import THREE_CLASS_NAMES, THREE_CLASS_MAP, _label_from_filename
 from pneumonia_classifier.models.transfer_learning import (build_model, get_gradcam_target_layer,)
 from pneumonia_classifier.visualization.gradcam import (generate_gradcam, load_image,)
 
 
 BINARY_LABEL_DIRS = {"NORMAL": 0, "PNEUMONIA": 1}
 BINARY_CLASS_NAMES = ["NORMAL", "PNEUMONIA"]
-
-
-def _label_from_filename(filename: str, parent_dir: str) -> int:
-    """Derive the three-class label from the image filename."""
-    if parent_dir.upper() == "NORMAL":
-        return THREE_CLASS_MAP["NORMAL"]
-    name_lower = filename.lower()
-    if "_bacteria_" in name_lower or name_lower.startswith("bacteria"):
-        return THREE_CLASS_MAP["BACTERIA"]
-    if "_virus_" in name_lower or name_lower.startswith("virus"):
-        return THREE_CLASS_MAP["VIRUS"]
-    return THREE_CLASS_MAP["BACTERIA"]
 
 
 def _pick_images_binary(
@@ -123,12 +111,17 @@ def _pick_images_three_class(
 
 
 def _output_filename_binary(model_name: str, category: str, img_path: Path) -> str:
+    # The class word is the ACTUAL (true) class of the image:
+    #   true_positive  -> model said pneumonia, was pneumonia
+    #   true_negative  -> model said normal,    was normal
+    #   false_positive -> model said pneumonia, was actually normal
+    #   false_negative -> model said normal,    was actually pneumonia
     stem = img_path.stem[:20]
     label_map = {
-        "tp": f"{model_name}_tp_pneumonia_{stem}.png",
-        "tn": f"{model_name}_tn_normal_{stem}.png",
-        "fp": f"{model_name}_fp_{stem}.png",
-        "fn": f"{model_name}_fn_{stem}.png",
+        "tp": f"{model_name}_true_positive_pneumonia_{stem}.png",
+        "tn": f"{model_name}_true_negative_normal_{stem}.png",
+        "fp": f"{model_name}_false_positive_normal_{stem}.png",
+        "fn": f"{model_name}_false_negative_pneumonia_{stem}.png",
     }
     return label_map[category]
 
@@ -168,6 +161,19 @@ def main() -> None:
     model.eval()
 
     target_layer = get_gradcam_target_layer(model)
+
+    # Clean up stale overlays from previous runs of THIS model+task. Because the
+    # filename embeds the example image (which changes when the model is
+    # retrained), old files are otherwise never overwritten and accumulate,
+    # producing duplicate/contradictory examples in the grids. We only do this
+    # for the auto-selected mode (not for an explicit --image-path)
+    if not args.image_path and output_dir.exists():
+        prefix = f"{args.model}_3class_" if three_class else f"{args.model}_"
+        for old in output_dir.glob(f"{prefix}*.png"):
+            # For the binary task, never delete the 3-class overlays.
+            if not three_class and "_3class_" in old.name:
+                continue
+            old.unlink()
 
     if args.image_path:
         img_path = Path(args.image_path)
